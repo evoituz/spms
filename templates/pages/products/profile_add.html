@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/pricelist.css' %}">
+    <style>
+        input {
+            width: 125px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-3">
+            <h3 class="title m-auto">Добавление профиля товара</h3>
+        </div>
+        <form method="post" class="bg-white py-3">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-3">
+                    <div class="form-group ml-2">
+                        <input type="text" name="profile_name" id="profileName" placeholder="Введите имя профиля" class="form-control">
+                    </div>
+                </div>
+                <div class="offset-2 col-4">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <label for="profileAlgorithm"><b>Алгоритм</b></label>
+                        <select name="algorithm" id="profileAlgorithm" class="form-control ml-3">
+                            {% for algorithm in algorithms %}
+                                <option value="{{ algorithm.id }}">{{ algorithm }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3 text-right">
+                    <button type="submit" class="btn btn-info mr-2">Сохранить</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="block" style="overflow: auto">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <td>Размеры</td>
+                                <td>A <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                                <td>B <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                                <td>C <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                                <td>D <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                                <td>E <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                                <td>F <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><input type="text" class="form-control" name="size"></td>
+                                <td><input type="text" class="form-control" name="items[1]"></td>
+                                <td><input type="text" class="form-control" name="items[1]"></td>
+                                <td><input type="text" class="form-control" name="items[1]"></td>
+                                <td><input type="text" class="form-control" name="items[1]"></td>
+                                <td><input type="text" class="form-control" name="items[1]"></td>
+                                <td><input type="text" class="form-control" name="items[1]"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" name="size"></td>
+                                <td><input type="text" class="form-control" name="items[2]"></td>
+                                <td><input type="text" class="form-control" name="items[2]"></td>
+                                <td><input type="text" class="form-control" name="items[2]"></td>
+                                <td><input type="text" class="form-control" name="items[2]"></td>
+                                <td><input type="text" class="form-control" name="items[2]"></td>
+                                <td><input type="text" class="form-control" name="items[2]"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" name="size"></td>
+                                <td><input type="text" class="form-control" name="items[3]"></td>
+                                <td><input type="text" class="form-control" name="items[3]"></td>
+                                <td><input type="text" class="form-control" name="items[3]"></td>
+                                <td><input type="text" class="form-control" name="items[3]"></td>
+                                <td><input type="text" class="form-control" name="items[3]"></td>
+                                <td><input type="text" class="form-control" name="items[3]"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        function lastSymbol() {
+            return $('li.item :last').attr('data-alphabet');
+        }
+
+        let alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+        let btnAddedField = $('#addedField');
+        btnAddedField.click(function () {
+            let symbol = lastSymbol();
+            let index = 0;
+            for (let i = 0; i < alphabet.length; i++) {
+                if (symbol === alphabet[i]) {
+                    index = i + 1;
+                    break;
+                }
+            }
+            $('ul.items').append(
+                `<li class="item d-flex mt-2">
+                    <input type="text" name="item_name" class="form-control" placeholder="Имя свойства">
+                    <input type="number" name="item_value" class="form-control ml-3" placeholder="${alphabet[index]}" data-alphabet="${alphabet[index]}">
+                </li>`
+            )
+        });
+    </script>
+
+{% endblock %}

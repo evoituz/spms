@@ -1,0 +1,30 @@
+[
+  {
+    "model": "catalogs.Algorithm",
+    "pk": 1,
+    "fields": {
+      "name": "D=B+(C:A)"
+    }
+  },
+  {
+    "model": "catalogs.Algorithm",
+    "pk": 2,
+    "fields": {
+      "name": "D=(B+C):A"
+    }
+  },
+  {
+    "model": "catalogs.Algorithm",
+    "pk": 3,
+    "fields": {
+      "name": "E=(C+D):(B=1000:A)*2"
+    }
+  },
+  {
+    "model": "catalogs.Algorithm",
+    "pk": 4,
+    "fields": {
+      "name": "E=(C+D):(B=1000:A)"
+    }
+  }
+]

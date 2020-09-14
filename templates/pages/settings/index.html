@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="courseUsdToUzs">Курс 1$ = {{ setting.course_usd_to_uzs }}</label>
+                                <input type="number" name="uzs" id="courseUsdToUzs" value="{{ setting.course_usd_to_uzs }}" class="form-control">
+                            </div>
+                            <button class="btn btn-info">Сохранить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

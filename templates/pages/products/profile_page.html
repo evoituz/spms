@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    {#    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">#}
+    <link href="{% static 'css/bootstrap-editable.css' %}" rel="stylesheet">
+    {#    <link href="{% static 'css/jqueryui-editable.css' %}" rel="stylesheet">#}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <table class="table" style="background-color: #fff;">
+                    <thead class="thead-light">
+                    <tr>
+                        {% for size in sizes %}
+                            {% if forloop.first %}
+                                <th scope="col">Размер</th>
+                                {% for item in size.items %}
+                                    <th scope="col">{{ item.name }}</th>
+                                {% endfor %}
+                                <th scope="col">USD</th>
+                                <th scope="col">UZS</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for size in sizes %}
+                        <tr>
+                            <th scope="row">
+                                <a href="#" class="edit_sizes" data-type="text" data-pk="{{ size.size_id }}" data-name="size" data-url="{% url 'product-profile' profile.product.id profile.id %}" data-original-title="Введите размер">
+                                    {{ size.size }}
+                                </a>
+                            </th>
+                            {% for item in size.items %}
+                                <td>
+                                    <a href="#" class="edit_items" data-type="text" data-size-pk="{{ size.size_id }}" data-pk="{{ item.id }}" data-name="item" data-url="{% url 'product-profile' profile.product.id profile.id %}" data-original-title="Введите новозе значение">
+                                        {{ item.value|floatformat }}
+                                    </a>
+                                </td>
+                            {% endfor %}
+                            <td>{{ size.algorithm|floatformat }}</td>
+                            <td>{{ size.uzs }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    {#    <script src="{% static 'js/jquery-ui.min.js' %}"></script>#}
+    <script src="{% static 'js/bootstrap-editable.min.js' %}"></script>
+    {#    <script src="{% static 'js/jqueryui-editable' %}"></script>#}
+    <script>
+        $('.edit_sizes').editable({
+            success: function (response, newValue) {
+                console.log(response);
+                console.log(newValue);
+                if (response.ok) {
+                    window.location.href = '/product/{{ profile.product.id }}/profile/{{ profile.id }}/'
+                }
+            }
+        })
+        $('.edit_items').editable({
+            success: function (response, newValue) {
+                console.log(response);
+                console.log(newValue);
+                if (response.ok) {
+                    window.location.href = '/product/{{ profile.product.id }}/profile/{{ profile.id }}/'
+                }
+            }
+        })
+    </script>
+{% endblock %}

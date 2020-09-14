@@ -1,0 +1,9 @@
+[
+  {
+    "model": "main.GeneralSettings",
+    "pk": 1,
+    "fields": {
+      "course_usd_to_uzs": 10300
+    }
+  }
+]
