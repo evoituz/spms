@@ -1,5 +1,4 @@
 .idea
-.git
 __pycache__
 */__pycache__
 apps/*/__pacache__
