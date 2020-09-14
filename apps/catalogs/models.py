@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.main.models import GeneralSettings
+from apps.main.models import *
 
 
 class Algorithm(models.Model):
