@@ -49,6 +49,10 @@ class ProductProfileSize(models.Model):
     price_usd = models.DecimalField('Цена в USD', decimal_places=2, max_digits=12, null=True, blank=True)
     price_uzs = models.DecimalField('Цена в UZS', decimal_places=0, max_digits=15, null=True, blank=True)
 
+    sell_price_usd = models.DecimalField('Цена продажи в USD', decimal_places=2, max_digits=12, null=True, blank=True)
+    sell_price_uzs = models.DecimalField('Цена продажи в UZS', decimal_places=0, max_digits=15, null=True, blank=True)
+    notes = models.TextField('Заметки', blank=True)
+
     class Meta:
         verbose_name = 'Размер'
         verbose_name_plural = 'Размеры'

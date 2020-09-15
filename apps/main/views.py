@@ -17,7 +17,8 @@ class SettingsViews(TemplateView):
         context['setting'] = GeneralSettings.load()
         return self.render_to_response(context)
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         conf = GeneralSettings.load()
         uzs = request.POST.get('uzs')
         conf.course_usd_to_uzs = int(uzs)

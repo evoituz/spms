@@ -5,10 +5,99 @@
     {#    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">#}
     <link href="{% static 'css/bootstrap-editable.css' %}" rel="stylesheet">
     {#    <link href="{% static 'css/jqueryui-editable.css' %}" rel="stylesheet">#}
+    <style>
+        .add-list-size {
+            flex-direction: inherit;
+            list-style: none;
+        }
+
+        .add-list-size li {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        ul.menu-list {
+            list-style: none;
+            flex-direction: inherit;
+        }
+
+        ul.menu-list li {
+            margin-left: 10px;
+            margin-right: 10px;
+            font-weight: 600;
+        }
+
+        ul.menu-list li:first-child {
+            margin-left: 0;
+        }
+
+        ul.menu-list li a {
+            font-size: .8em;
+            padding: 10px 15px;
+            background-color: #458fee;
+            color: white;
+        }
+        #add_size_fields {
+            display: none;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
     <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-group menu-list">
+                    <li>{{ profile.product.name }} <i class="fa fa-arrow-right"></i></li>
+                    {% for profile_item in profile.product.profiles.all %}
+                        {% if profile_item.product.id == product.id and profile_item.id == profile.id %}
+                            <li><a style="background-color: #59a1f6; color: white;">{{ profile_item.name }}</a></li>
+                        {% else %}
+                            <li>
+                                <a href="{% url 'product-profile' profile_item.product.id profile_item.id %}">{{ profile_item.name }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 offset-md-10 col-md-2">
+                <div class="text-right">
+                    <a href="#" id="add_size"><i class="fa fa-plus" style="font-size: 1.7em;"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="add_size_fields">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'add-size-to-profile' product.id profile.id %}" method="post">
+                            {% csrf_token %}
+                            <ul class="list-group add-list-size">
+                                <li><input type="text" class="form-control" name="size" placeholder="Размер"></li>
+                                {% for size in sizes %}
+                                    {% if forloop.first %}
+                                        {% for item in size.items %}
+                                            <li>
+                                                <input type="text" class="form-control" name="{{ item.name }}"
+                                                       placeholder="{{ item.name }}">
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                                {#                                <li><input type="text" name="size" placeholder=""></li>#}
+                                {#                                <li><input type="text" name="size" placeholder=""></li>#}
+                                {#                                <li><input type="text" name="size" placeholder=""></li>#}
+                                <li>
+                                    <button type="submit" class="btn btn-success">Добавить</button>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <table class="table" style="background-color: #fff;">
@@ -20,8 +109,11 @@
                                 {% for item in size.items %}
                                     <th scope="col">{{ item.name }}</th>
                                 {% endfor %}
-                                <th scope="col">USD</th>
-                                <th scope="col">UZS</th>
+                                <th scope="col">usd</th>
+                                <th scope="col">uzs</th>
+                                <th scope="col">прод в $</th>
+                                <th scope="col">прод в uzs</th>
+                                <th scope="col">заметки</th>
                             {% endif %}
                         {% endfor %}
                     </tr>
@@ -30,24 +122,50 @@
                     {% for size in sizes %}
                         <tr>
                             <th scope="row">
-                                <a href="#" class="edit_sizes" data-type="text" data-pk="{{ size.size_id }}" data-name="size" data-url="{% url 'product-profile' profile.product.id profile.id %}" data-original-title="Введите размер">
+                                <a href="#" class="edit_sizes" data-type="text" data-pk="{{ size.size_id }}"
+                                   data-name="size" data-url="{% url 'product-profile' profile.product.id profile.id %}"
+                                   data-original-title="Введите размер">
                                     {{ size.size }}
                                 </a>
                             </th>
                             {% for item in size.items %}
                                 <td>
-                                    <a href="#" class="edit_items" data-type="text" data-size-pk="{{ size.size_id }}" data-pk="{{ item.id }}" data-name="item" data-url="{% url 'product-profile' profile.product.id profile.id %}" data-original-title="Введите новозе значение">
+                                    <a href="#" class="edit_items" data-type="text" data-size-pk="{{ size.size_id }}"
+                                       data-pk="{{ item.id }}" data-name="item"
+                                       data-url="{% url 'product-profile' profile.product.id profile.id %}"
+                                       data-original-title="Введите новозе значение">
                                         {{ item.value|floatformat }}
                                     </a>
                                 </td>
                             {% endfor %}
                             <td>{{ size.algorithm|floatformat }}</td>
                             <td>{{ size.uzs }}</td>
+                            <td>
+                                <a href="#" class="edit_sell_price_usd" data-type="text" data-pk="{{ size.size_id }}"
+                                   data-name="sell_price_usd"
+                                   data-url="{% url 'product-profile' profile.product.id profile.id %}"
+                                   data-original-title="Введите цену прожади в USD">
+                                    {{ size.sell_price_usd }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="#" class="edit_sell_price_uzs" data-type="text" data-pk="{{ size.size_id }}"
+                                   data-name="sell_price_uzs"
+                                   data-url="{% url 'product-profile' profile.product.id profile.id %}"
+                                   data-original-title="Введите цену прожади в UZS">
+                                    {{ size.sell_price_uzs }}
+                                </a>
+                            </td>
+                            <td><a href="#" class="edit_notes" data-type="text" data-pk="{{ size.size_id }}"
+                                   data-name="notes"
+                                   data-url="{% url 'product-profile' profile.product.id profile.id %}"
+                                   data-original-title="Введите заметки">
+                                {{ size.notes }}
+                            </a></td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
@@ -59,23 +177,23 @@
     <script src="{% static 'js/bootstrap-editable.min.js' %}"></script>
     {#    <script src="{% static 'js/jqueryui-editable' %}"></script>#}
     <script>
-        $('.edit_sizes').editable({
-            success: function (response, newValue) {
-                console.log(response);
-                console.log(newValue);
-                if (response.ok) {
-                    window.location.href = '/product/{{ profile.product.id }}/profile/{{ profile.id }}/'
-                }
-            }
-        })
-        $('.edit_items').editable({
-            success: function (response, newValue) {
-                console.log(response);
-                console.log(newValue);
-                if (response.ok) {
-                    window.location.href = '/product/{{ profile.product.id }}/profile/{{ profile.id }}/'
-                }
-            }
+        $('#add_size').click(function () {
+            $('#add_size_fields').toggle('fast');
         })
     </script>
+    {% if user.is_authenticated and user.is_superuser %}
+        <script>
+            let editList = ['.edit_sizes', '.edit_items', '.edit_sell_price_usd', '.edit_sell_price_uzs', '.edit_notes'];
+
+            for (let i = 0; i < editList.length; i++) {
+                $(editList[i]).editable({
+                    success: function (response, newValue) {
+                        if (response.ok) {
+                            window.location.href = '/product/{{ profile.product.id }}/profile/{{ profile.id }}/'
+                        }
+                    }
+                })
+            }
+        </script>
+    {% endif %}
 {% endblock %}

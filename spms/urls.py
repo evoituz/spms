@@ -11,7 +11,8 @@ urlpatterns = [
     path('settings/', SettingsViews.as_view(), name='settings'),
     path('products/', PriceListViews.as_view(), name='products'),
     path('product/<int:product_id>/profile/<int:profile_id>/', ProductProfileViews.as_view(), name='product-profile'),
-    path('catalogs/product/<int:product_id>/profile/add/', ProductProfileAdd.as_view(), name='product-profile-add'),
+    path('product/<int:product_id>/profile/add/', ProductProfileAdd.as_view(), name='product-profile-add'),
+    path('product/<int:product_id>/profile/<int:profile_id>/size/add/', add_size_to_profile, name='add-size-to-profile'),
 ]
 
 if settings.DEBUG:

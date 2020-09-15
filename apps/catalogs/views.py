@@ -44,10 +44,14 @@ class ProductProfileViews(DetailView):
                 'size_id': size.id,
                 'algorithm': size.get_algorithm(),
                 'uzs': size.get_uzs(),
-                'items': size.items.values()
+                'sell_price_usd': size.sell_price_usd,
+                'sell_price_uzs': size.sell_price_uzs,
+                'notes': size.notes,
+                'items': size.items.values(),
             }
             sizes.append(data)
         context['sizes'] = sizes
+        context['product'] = product
         return self.render_to_response(context)
 
     def get_queryset(self):
@@ -75,9 +79,37 @@ class ProductProfileViews(DetailView):
             else:
                 item.value = float(value)
             item.save()
+        if name == 'sell_price_usd':
+            size = profile.sizes.get(id=pk)
+            size.sell_price_usd = float(value)
+            size.save()
+        if name == 'sell_price_uzs':
+            size = profile.sizes.get(id=pk)
+            size.sell_price_uzs = float(value)
+            size.save()
+        if name == 'notes':
+            size = profile.sizes.get(id=pk)
+            size.notes = value
+            size.save()
 
         return JsonResponse({'ok': 'success'})
         # return redirect(reverse('product-profile', None, (product_id, profile_id)))
+
+
+def add_size_to_profile(request, product_id, profile_id):
+    print(request)
+    if request.POST:
+        p = request.POST
+        profile = ProductProfile.objects.get(product_id=product_id, id=profile_id)
+        size = None
+        for k, v in p.items():
+            if k == 'csrfmiddlewaretoken':
+                continue
+            elif k == 'size':
+                size = ProductProfileSize.objects.create(product_profile=profile, size=v)
+            else:
+                ProductProfileSizeItem.objects.create(size=size, name=k, value=v)
+        return redirect(reverse('product-profile', None, (product_id, profile_id)))
 
 
 class ProductProfileAdd(TemplateView):
@@ -107,4 +139,5 @@ class ProductProfileAdd(TemplateView):
                         ProductProfileSizeItem.objects.create(
                             size=s, name=attr, value=float(p.getlist('items[{}]'.format(index + 1))[i])
                         )
-        return redirect(reverse('product-profile-add', kwargs={'product_id': product_id}))
+        # return redirect(reverse('product-profile-add', kwargs={'product_id': product_id}))
+        return redirect(reverse('products'))
