@@ -41,7 +41,9 @@
                                             {% endif %}
                                         </li>
                                     {% endfor %}
-                                    <li class="profile-item profile-item-add"><a href="{% url 'product-profile-add' product.id %}">+</a></li>
+                                   {% if user.is_authenticated and user.is_superuser %}
+                                         <li class="profile-item profile-item-add"><a href="{% url 'product-profile-add' product.id %}">+</a></li>
+                                   {% endif %}
                                 </ul>
                             {% endif %}
                         </li>
