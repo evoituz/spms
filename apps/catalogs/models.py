@@ -70,15 +70,15 @@ class ProductProfileSize(models.Model):
         b = items[1].value
         c = items[2].value
         if alg == 1:
-            return b + (c / a)
+            return round(b + (c / a), 3)
         if alg == 2:
-            return (b + c) / a
+            return round((b + c) / a, 3)
         if alg == 3:
             d = items[3].value
-            return (c + d) / (1000 / a) * 2
+            return round((c + d) / (1000 / a) * 2, 3)
         if alg == 4:
             d = items[3].value
-            return (c + d) / (1000 / a)
+            return round((c + d) / (1000 / a), 3)
 
     def get_uzs(self):
         conf = GeneralSettings().load()

@@ -37,6 +37,7 @@
             background-color: #458fee;
             color: white;
         }
+
         #add_size_fields {
             display: none;
         }
@@ -134,11 +135,11 @@
                                        data-pk="{{ item.id }}" data-name="item"
                                        data-url="{% url 'product-profile' profile.product.id profile.id %}"
                                        data-original-title="Введите новозе значение">
-                                        {{ item.value|floatformat }}
+                                        {{ item.value }}
                                     </a>
                                 </td>
                             {% endfor %}
-                            <td>{{ size.algorithm|floatformat }}</td>
+                            <td>{{ size.algorithm }}</td>
                             <td>{{ size.uzs }}</td>
                             <td>
                                 <a href="#" class="edit_sell_price_usd" data-type="text" data-pk="{{ size.size_id }}"
@@ -176,13 +177,11 @@
     {#    <script src="{% static 'js/jquery-ui.min.js' %}"></script>#}
     <script src="{% static 'js/bootstrap-editable.min.js' %}"></script>
     {#    <script src="{% static 'js/jqueryui-editable' %}"></script>#}
-    <script>
-        $('#add_size').click(function () {
-            $('#add_size_fields').toggle('fast');
-        })
-    </script>
     {% if user.is_authenticated and user.is_superuser %}
         <script>
+            $('#add_size').click(function () {
+                $('#add_size_fields').toggle('fast');
+            })
             let editList = ['.edit_sizes', '.edit_items', '.edit_sell_price_usd', '.edit_sell_price_uzs', '.edit_notes'];
 
             for (let i = 0; i < editList.length; i++) {

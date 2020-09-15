@@ -119,6 +119,7 @@ class ProductProfileAdd(TemplateView):
         context = self.get_context_data(**kwargs)
         context['algorithms'] = Algorithm.objects.all()
         context['product'] = Product.objects.get(id=int(kwargs.get('product_id')))
+        context['quantity_tables'] = [i for i in range(1, 51)]
         return self.render_to_response(context)
 
     def post(self, request, product_id):

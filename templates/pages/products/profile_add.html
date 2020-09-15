@@ -20,7 +20,8 @@
             <div class="row">
                 <div class="col-3">
                     <div class="form-group ml-2">
-                        <input type="text" name="profile_name" required id="profileName" placeholder="Введите имя профиля" class="form-control">
+                        <input type="text" name="profile_name" required id="profileName"
+                               placeholder="Введите имя профиля" class="form-control">
                     </div>
                 </div>
                 <div class="offset-2 col-4">
@@ -45,42 +46,32 @@
                             <thead>
                             <tr>
                                 <td>Размеры</td>
-                                <td>A <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
-                                <td>B <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
-                                <td>C <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
-                                <td>D <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
-                                <td>E <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
-                                <td>F <input type="text" name="attr_name" class="form-control" placeholder="Имя аттрибута"></td>
+                                <td>A <input type="text" name="attr_name" class="form-control"
+                                             placeholder="Имя аттрибута"></td>
+                                <td>B <input type="text" name="attr_name" class="form-control"
+                                             placeholder="Имя аттрибута"></td>
+                                <td>C <input type="text" name="attr_name" class="form-control"
+                                             placeholder="Имя аттрибута"></td>
+                                <td>D <input type="text" name="attr_name" class="form-control"
+                                             placeholder="Имя аттрибута"></td>
+                                <td>E <input type="text" name="attr_name" class="form-control"
+                                             placeholder="Имя аттрибута"></td>
+                                <td>F <input type="text" name="attr_name" class="form-control"
+                                             placeholder="Имя аттрибута"></td>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td><input type="text" class="form-control" name="size"></td>
-                                <td><input type="text" class="form-control" name="items[1]"></td>
-                                <td><input type="text" class="form-control" name="items[1]"></td>
-                                <td><input type="text" class="form-control" name="items[1]"></td>
-                                <td><input type="text" class="form-control" name="items[1]"></td>
-                                <td><input type="text" class="form-control" name="items[1]"></td>
-                                <td><input type="text" class="form-control" name="items[1]"></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" class="form-control" name="size"></td>
-                                <td><input type="text" class="form-control" name="items[2]"></td>
-                                <td><input type="text" class="form-control" name="items[2]"></td>
-                                <td><input type="text" class="form-control" name="items[2]"></td>
-                                <td><input type="text" class="form-control" name="items[2]"></td>
-                                <td><input type="text" class="form-control" name="items[2]"></td>
-                                <td><input type="text" class="form-control" name="items[2]"></td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" class="form-control" name="size"></td>
-                                <td><input type="text" class="form-control" name="items[3]"></td>
-                                <td><input type="text" class="form-control" name="items[3]"></td>
-                                <td><input type="text" class="form-control" name="items[3]"></td>
-                                <td><input type="text" class="form-control" name="items[3]"></td>
-                                <td><input type="text" class="form-control" name="items[3]"></td>
-                                <td><input type="text" class="form-control" name="items[3]"></td>
-                            </tr>
+                            {% for i in quantity_tables %}
+                                <tr>
+                                    <td><input type="text" class="form-control" name="size"></td>
+                                    <td><input type="text" class="form-control" name="items[{{ i }}]"></td>
+                                    <td><input type="text" class="form-control" name="items[{{ i }}]"></td>
+                                    <td><input type="text" class="form-control" name="items[{{ i }}]"></td>
+                                    <td><input type="text" class="form-control" name="items[{{ i }}]"></td>
+                                    <td><input type="text" class="form-control" name="items[{{ i }}]"></td>
+                                    <td><input type="text" class="form-control" name="items[{{ i }}]"></td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
