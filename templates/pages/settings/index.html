@@ -14,7 +14,7 @@
                         <form method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                <label for="courseUsdToUzs">Курс 1$ = {{ setting.course_usd_to_uzs }}</label>
+                                <label for="courseUsdToUzs">Курс 1Ж = {{ setting.course_usd_to_uzs }}</label>
                                 <input type="number" name="uzs" id="courseUsdToUzs" value="{{ setting.course_usd_to_uzs }}" class="form-control">
                             </div>
                             <button class="btn btn-info">Сохранить</button>
