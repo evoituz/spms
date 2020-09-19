@@ -6,7 +6,13 @@ from django.urls import reverse
 from django.views.generic import TemplateView, DetailView
 
 from apps.catalogs.models import *
-from apps.main.models import GeneralSettings
+
+
+def checking_value(val):
+    result = val
+    if val.find(',') != -1:
+        result = val.replace(',', '.')
+    return float(result)
 
 
 class PriceListViews(TemplateView):
@@ -97,7 +103,6 @@ class ProductProfileViews(DetailView):
 
 
 def add_size_to_profile(request, product_id, profile_id):
-    print(request)
     if request.POST:
         p = request.POST
         profile = ProductProfile.objects.get(product_id=product_id, id=profile_id)
@@ -108,7 +113,7 @@ def add_size_to_profile(request, product_id, profile_id):
             elif k == 'size':
                 size = ProductProfileSize.objects.create(product_profile=profile, size=v)
             else:
-                ProductProfileSizeItem.objects.create(size=size, name=k, value=v)
+                ProductProfileSizeItem.objects.create(size=size, name=k, value=checking_value(v))
         return redirect(reverse('product-profile', None, (product_id, profile_id)))
 
 
@@ -136,13 +141,17 @@ class ProductProfileAdd(TemplateView):
         alg = Algorithm.objects.get(id=int(algorithm))
         product = Product.objects.get(id=product_id)
         profile = ProductProfile.objects.create(product=product, name=profile_name, algorithm=alg)
-        for index, size in enumerate(sizes):
-            if size:
-                s = ProductProfileSize.objects.create(product_profile=profile, size=size)
-                for i, attr in enumerate(attr_names):
-                    if attr:
-                        ProductProfileSizeItem.objects.create(
-                            size=s, name=attr, value=float(p.getlist('items[{}]'.format(index + 1))[i])
-                        )
+        try:
+            for index, size in enumerate(sizes):
+                if size:
+                    s = ProductProfileSize.objects.create(product_profile=profile, size=size)
+                    for i, attr in enumerate(attr_names):
+                        if attr:
+                            ProductProfileSizeItem.objects.create(
+                                size=s, name=attr, value=checking_value(p.getlist('items[{}]'.format(index + 1))[i])
+                            )
+        except Exception as e:
+            print(e)
+            profile.delete()
         # return redirect(reverse('product-profile-add', kwargs={'product_id': product_id}))
         return redirect(reverse('products'))

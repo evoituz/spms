@@ -82,7 +82,7 @@ class ProductProfileSize(models.Model):
 
     def get_uzs(self):
         conf = GeneralSettings().load()
-        return round(self.get_algorithm() * float(conf.course_usd_to_uzs))
+        return round(self.get_algorithm() * float(conf.course_usd_to_uzs), 3)
 
     def __str__(self):
         return self.size
