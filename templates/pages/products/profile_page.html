@@ -5,43 +5,7 @@
     {#    <link href="{% static 'css/jquery-ui.css' %}" rel="stylesheet">#}
     <link href="{% static 'css/bootstrap-editable.css' %}" rel="stylesheet">
     {#    <link href="{% static 'css/jqueryui-editable.css' %}" rel="stylesheet">#}
-    <style>
-        .add-list-size {
-            flex-direction: inherit;
-            list-style: none;
-        }
-
-        .add-list-size li {
-            margin-left: 10px;
-            margin-right: 10px;
-        }
-
-        ul.menu-list {
-            list-style: none;
-            flex-direction: inherit;
-        }
-
-        ul.menu-list li {
-            margin-left: 10px;
-            margin-right: 10px;
-            font-weight: 600;
-        }
-
-        ul.menu-list li:first-child {
-            margin-left: 0;
-        }
-
-        ul.menu-list li a {
-            font-size: .8em;
-            padding: 10px 15px;
-            background-color: #458fee;
-            color: white;
-        }
-
-        #add_size_fields {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/profilepage.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -52,7 +16,7 @@
                     <li>{{ profile.product.name }} <i class="fa fa-arrow-right"></i></li>
                     {% for profile_item in profile.product.profiles.all %}
                         {% if profile_item.product.id == product.id and profile_item.id == profile.id %}
-                            <li><a style="background-color: #59a1f6; color: white;">{{ profile_item.name }}</a></li>
+                            <li><a style="background-color: #ff9a33; color: white;">{{ profile_item.name }}</a></li>
                         {% else %}
                             <li>
                                 <a href="{% url 'product-profile' profile_item.product.id profile_item.id %}">{{ profile_item.name }}</a>

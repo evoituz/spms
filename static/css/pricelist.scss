@@ -1,3 +1,7 @@
+$text-color: #48ee45;
+$text-color-hover: #ff9a33;
+$button-color: #17a2b8;
+
 ul.product-list {
   list-style-type: none;
   li.product-item {
@@ -5,13 +9,13 @@ ul.product-list {
     position: relative;
     margin: 5px 0;
     padding: 5px 10px;
-    background-color: #458fee;
+    background-color: $text-color;
     color: #fff;
     border-radius: 5px;
     font-size: 1em;
     &:hover {
       cursor: pointer;
-      background-color: #59a1f6;
+      background-color: $text-color-hover;
       & > ul.sub-product-list {
         display: flex;
       }
@@ -25,18 +29,20 @@ ul.product-list {
       li.profile-item {
         width: auto;
         margin: 0 5px;
-        padding: 5px 10px;
-        background-color: #458fee;
+        background-color: $text-color;
         border-radius: 5px;
         font-size: 1em;
         text-align: center;
         position: relative;
+        display: flex;
+        align-items: center;
         a {
           text-decoration: none;
           color: #fff;
+          padding: 5px 10px;
         }
         &:hover {
-          background-color: #59a1f6;
+          background-color: $text-color-hover;
         }
         &:hover > ul.sizes-product-list {
           display: block;
@@ -53,22 +59,23 @@ ul.product-list {
             width: auto;
             margin: 5px 0;
             padding: 5px 10px;
-            background-color: #458fee;
+            background-color: $text-color;
             border-radius: 5px;
             font-size: .8rem;
             text-align: center;
             &:hover {
-              background-color: #59a1f6;
+              background-color: $text-color-hover;
             }
           }
         }
       }
       li.profile-item-add {
-        background-color: #17a2b8;
+        background-color: $button-color;
         display: flex;
         align-items: center;
         a {
           color: #fff;
+          padding: 5px 10px;
         }
       }
     }

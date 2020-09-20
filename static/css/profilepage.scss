@@ -1,0 +1,32 @@
+$text-color: #48ee45;
+$text-color-hover: #de9500;
+
+.add-list-size {
+  flex-direction: inherit;
+  list-style: none;
+  li {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+ul.menu-list {
+  list-style: none;
+  flex-direction: inherit;
+  li {
+    margin-left: 10px;
+    margin-right: 10px;
+    font-weight: 600;
+    &:first-child {
+      margin-left: 0;
+    }
+    a {
+      font-size: .8em;
+      padding: 10px 15px;
+      background-color: $text-color;
+      color: #fff;
+    }
+  }
+}
+#add_size_fields {
+  display: none;
+}

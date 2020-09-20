@@ -6,14 +6,14 @@ ul.product-list li.product-item {
   position: relative;
   margin: 5px 0;
   padding: 5px 10px;
-  background-color: #458fee;
+  background-color: #48ee45;
   color: #fff;
   border-radius: 5px;
   font-size: 1em;
 }
 ul.product-list li.product-item:hover {
   cursor: pointer;
-  background-color: #59a1f6;
+  background-color: #ff9a33;
 }
 ul.product-list li.product-item:hover > ul.sub-product-list {
   display: flex;
@@ -28,19 +28,21 @@ ul.product-list li.product-item ul.sub-product-list {
 ul.product-list li.product-item ul.sub-product-list li.profile-item {
   width: auto;
   margin: 0 5px;
-  padding: 5px 10px;
-  background-color: #458fee;
+  background-color: #48ee45;
   border-radius: 5px;
   font-size: 1em;
   text-align: center;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 ul.product-list li.product-item ul.sub-product-list li.profile-item a {
   text-decoration: none;
   color: #fff;
+  padding: 5px 10px;
 }
 ul.product-list li.product-item ul.sub-product-list li.profile-item:hover {
-  background-color: #59a1f6;
+  background-color: #ff9a33;
 }
 ul.product-list li.product-item ul.sub-product-list li.profile-item:hover > ul.sizes-product-list {
   display: block;
@@ -58,13 +60,13 @@ ul.product-list li.product-item ul.sub-product-list li.profile-item ul.sizes-pro
   width: auto;
   margin: 5px 0;
   padding: 5px 10px;
-  background-color: #458fee;
+  background-color: #48ee45;
   border-radius: 5px;
   font-size: 0.8rem;
   text-align: center;
 }
 ul.product-list li.product-item ul.sub-product-list li.profile-item ul.sizes-product-list li.size-item:hover {
-  background-color: #59a1f6;
+  background-color: #ff9a33;
 }
 ul.product-list li.product-item ul.sub-product-list li.profile-item-add {
   background-color: #17a2b8;
@@ -73,6 +75,7 @@ ul.product-list li.product-item ul.sub-product-list li.profile-item-add {
 }
 ul.product-list li.product-item ul.sub-product-list li.profile-item-add a {
   color: #fff;
+  padding: 5px 10px;
 }
 
 /*# sourceMappingURL=pricelist.css.map */
