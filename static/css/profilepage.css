@@ -1,0 +1,33 @@
+.add-list-size {
+  flex-direction: inherit;
+  list-style: none;
+}
+.add-list-size li {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+ul.menu-list {
+  list-style: none;
+  flex-direction: inherit;
+}
+ul.menu-list li {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: 600;
+}
+ul.menu-list li:first-child {
+  margin-left: 0;
+}
+ul.menu-list li a {
+  font-size: 0.8em;
+  padding: 10px 15px;
+  background-color: #48ee45;
+  color: #fff;
+}
+
+#add_size_fields {
+  display: none;
+}
+
+/*# sourceMappingURL=profilepage.css.map */
