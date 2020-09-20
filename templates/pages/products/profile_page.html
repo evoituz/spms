@@ -16,7 +16,7 @@
                     <li>{{ profile.product.name }} <i class="fa fa-arrow-right"></i></li>
                     {% for profile_item in profile.product.profiles.all %}
                         {% if profile_item.product.id == product.id and profile_item.id == profile.id %}
-                            <li><a style="background-color: #ff9a33; color: white;">{{ profile_item.name }}</a></li>
+                            <li><a style="background-color: #48ee45; color: white;">{{ profile_item.name }}</a></li>
                         {% else %}
                             <li>
                                 <a href="{% url 'product-profile' profile_item.product.id profile_item.id %}">{{ profile_item.name }}</a>
