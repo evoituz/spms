@@ -12,13 +12,17 @@ $text-color-hover: #de9500;
 ul.menu-list {
   list-style: none;
   flex-direction: inherit;
+  flex-wrap: wrap;
   li {
     margin-left: 10px;
     margin-right: 10px;
     font-weight: 600;
+    width: auto;
+    height: 40px;
     &:first-child {
       margin-left: 0;
     }
+
     a {
       font-size: .8em;
       padding: 10px 15px;

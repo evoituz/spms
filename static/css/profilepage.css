@@ -10,11 +10,14 @@
 ul.menu-list {
   list-style: none;
   flex-direction: inherit;
+  flex-wrap: wrap;
 }
 ul.menu-list li {
   margin-left: 10px;
   margin-right: 10px;
   font-weight: 600;
+  width: auto;
+  height: 40px;
 }
 ul.menu-list li:first-child {
   margin-left: 0;
