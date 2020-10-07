@@ -35,6 +35,81 @@
                         <div id="cartGrid"></div>
                     </div>
                 </div>
+                <div class="card p-2">
+                    <div class="d-flex">
+                        <div class="float-left w-50 font-weight-bold">Общая стоимость: <span class="totalCost"></span>
+                        </div>
+                        <button id="sell" class="btn btn-success float-right w-50">Продать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="sellProductModal" tabindex="-1" role="dialog"
+         aria-labelledby="sellProductModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sellProductModalLabel">Новый заказ</h5>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Продукт</th>
+                            <th>Кол-во</th>
+                            <th>Цена</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderFields"></tbody>
+                    </table>
+                    <div class="float-left w-50 font-weight-bold">Общая стоимость: <span class="totalCost"></span>
+                    </div>
+                    <input id="customerName" type="text" class="form-control form-value" name="customerName"
+                           placeholder="Имя покупателя (по желанию)">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">
+                            Отмена
+                        </button>
+                        <button type="button" class="btn btn-success" id="confirmSell" data-product-id="">
+                            Подтвердить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addToCartModal" tabindex="-1" role="dialog"
+         aria-labelledby="addToCartModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addToCartModalLabel">Новый заказ</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="customPrice" class="col-form-label">Кол-во:</label>
+                        <input id="quantity" type="number" min="0" step="any"
+                               class="form-control form-value" value="0"
+                               name="quantity">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">
+                            Отмена
+                        </button>
+                        <button type="button" class="btn btn-success" id="addToCart" data-product-id="">Добавить
+                            в
+                            корзину
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -45,6 +120,74 @@
     <script type="text/javascript" src="{% static 'js/jsgrid.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/stock_category_list.js' %}"></script>
     <script>
+
+        const calculateTotalPrice = () => {
+            let totalPrice = 0
+            let tds = $('#cartGrid > div.jsgrid-grid-body > table > tbody > tr')
+            for (let i = 0; i < tds.length; i++) {
+                let price = $(tds[i]).children('td:nth-child(5)').text();
+                totalPrice += Number(price);
+            }
+
+            $('.totalCost').text(totalPrice + ' сум');
+            return totalPrice
+        }
+
+        $('#confirmSell').click(function (e) {
+            let trs = $('#orderFields').children('tr')
+            let data = {'items': [], 'total': 0, 'customer': ''}
+            for(let i = 0; i < trs.length; i++){
+                let item = $(trs[i]).children('td:last').text()
+                data['items'].push(item)
+            }
+            data['total'] = calculateTotalPrice()
+            data['customer'] = $('#customerName').val()
+        })
+
+        $('#sell').click(function () {
+            $('#sellProductModal').modal('show');
+            let table = $('#orderFields')
+            table.empty()
+            let cartItems = $('#cartGrid > div.jsgrid-grid-body > table > tbody').children('tr')
+            for (let i = 0; i < cartItems.length; i++) {
+                let item = JSON.parse($(cartItems[i]).children('td:nth-child(7)').text());
+                table.append(`
+                    <tr>
+                        <td>${item.profile_name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.price_sell}</td>
+                        <td class="d-none">${JSON.stringify(item)}</td>
+                    </tr>
+                `)
+            }
+        })
+
+        $('#addToCart').click(function () {
+            let cartGrid = $('#cartGrid');
+            let quantity = $('#quantity').val()
+            let item = JSON.parse($('#item').text())
+
+            item.quantity = quantity;
+            if (item.type_product === 'pc' || item.type_product === 'm') {
+                item.price_sell = Number(item.quantity) * Number(item.price_sell);
+            } else {
+                item.price_sell = ((Number(item.quantity) / 1000) * Number(item.price_sell)).toFixed(0);
+            }
+            if (item.type_product === 'pc') {
+                item.type_product = 'шт.'
+            } else if (item.type_product === 'g') {
+                item.type_product = 'г.'
+            } else {
+                item.type_product = 'м.'
+            }
+            item.hidden_data = JSON.stringify(item)
+            cartGrid.jsGrid("insertItem", item).done(function () {
+            });
+            calculateTotalPrice()
+            $('#addToCartModal').modal('hide')
+            $('#quantity').val('0')
+        })
+
         let shop = $('#shopGrid');
         shop.jsGrid({
             width: "100%",
@@ -66,8 +209,12 @@
                         type: 'GET',
                         dataType: 'json',
                         data: data,
-                    }).done(function (result) {
-                        console.log(result);
+                    }).done(function (response) {
+                        let result = $.grep(response, function (item) {
+                            return (!data.category_id || item.category_id === data.category_id) &&
+                                (!data.profile_name.toLowerCase() || item.profile_name.toLowerCase().indexOf(data.profile_name.toLowerCase()) > -1) &&
+                                (!data.size.toLowerCase() || item.size.toLowerCase().indexOf(data.size.toLowerCase()) > -1)
+                        });
                         d.resolve(result);
                     });
                     return d.promise();
@@ -75,31 +222,71 @@
             },
             fields: [
                 {name: "id", type: "hidden", title: "#", width: 25},
-                {name: "category_id", type: "select", title: "Категория", items: categories, valueField: "id", textField: "name"},
+                {
+                    name: "category_id",
+                    type: "select",
+                    title: "Категория",
+                    items: categories,
+                    valueField: "id",
+                    textField: "name"
+                },
                 {name: "profile_name", type: "text", title: "Профиль", width: 150},
                 {name: "size", type: "text", title: "Размер", width: 80},
                 {name: "quantity", type: "hidden", title: "Кол.", width: 60},
-                {name: "type_product", type: "select", title: "Кол.", items: type_quantity, valueField: "type", textField: "name", width: 50},
+                {
+                    name: "type_product",
+                    type: "select",
+                    title: "Кол.",
+                    items: type_quantity,
+                    valueField: "type",
+                    textField: "name",
+                    width: 50
+                },
                 {name: "price_sell", type: "hidden", title: "Продажа", width: 50},
-                {type: "control"}
+                {
+                    type: "control", editButton: false, deleteButton: false,
+                    itemTemplate: function (value, item) {
+                        let el = $('<input class="jsgrid-button jsgrid-insert-button" type="button" title="Insert">');
+                        el.click(function () {
+                            let modalForm = $('#addToCartModal')
+                            let i = JSON.stringify(item)
+                            $('#item').remove()
+                            modalForm.append(`<div id="item" class="d-none">${i}</div>`)
+                            modalForm.modal('show')
+                        })
+                        return el;
+
+                    },
+                }
             ]
         })
 
         let cart = $('#cartGrid');
         cart.jsGrid({
             width: "100%",
-
             deleteConfirm: "Вы действительно хотите удалить товар из корзины?",
-
             fields: [
                 {name: "id", type: "number", title: "#", width: 25},  // Stock ID
-                {name: "title", type: "text", title: "Название", width: 140},  // Category, Stock - for info
+                {name: "profile_name", type: "text", title: "Название", width: 140},  // Category, Stock - for info
                 {name: "quantity", type: "number", title: "Количество", width: 70},
-                {name: "quantity_type", type: "text", title: "Тип", width: 30},
-                {name: "price", type: "number", title: "Цена", width: 40},
-                {type: "control"}
+                {name: "type_product", type: "text", title: "Тип", width: 30},
+                {name: "price_sell", type: "number", title: "Цена", width: 40},
+                {
+                    type: "control", editButton: false, itemTemplate: function () {
+                        let el = $('<input class="jsgrid-button jsgrid-delete-button" type="button" title="Удалить">');
+                        el.click(function () {
+                            cart.jsGrid("deleteItem", item).done(function () {
+                                calculateTotalPrice();
+                            });
+                        })
+                        return el;
+                    }
+                },
+                {name: 'hidden_data', type: 'text', css: 'd-none hide', title: '', width: 0}
             ]
         });
+
+
     </script>
 
 {% endblock %}

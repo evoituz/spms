@@ -70,8 +70,6 @@
                         data: data,
                     }).done(function (response) {
                         let result = $.grep(response, function (item) {
-                            console.log(item)
-                            console.log(!data.profile_name.toLowerCase())
                             return (!data.category_id || item.category_id === data.category_id) &&
                                 (!data.profile_name.toLowerCase() || item.profile_name.toLowerCase().indexOf(data.profile_name.toLowerCase()) > -1) &&
                                 (!data.size.toLowerCase() || item.size.toLowerCase().indexOf(data.size.toLowerCase()) > -1)
