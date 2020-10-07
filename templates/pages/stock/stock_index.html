@@ -13,9 +13,9 @@
 
 {% block content %}
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col">
+            <div class="col-9">
                 <div class="card">
                     <div class="card-body">
                         <ul class="d-none" id="stock_categories">
@@ -28,13 +28,13 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="position-fixed" style="top: 110px; right: 5px;">
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">Категории</h3>
-                <div id="stockCategoryGrid"></div>
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Категории</h3>
+                        <div id="stockCategoryGrid"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -118,7 +118,7 @@
         });
 
         let stockCategories = $('#stockCategoryGrid').jsGrid({
-            width: "300px",
+            width: "100%",
             height: "auto",
 
             filtering: false,
