@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid.min.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid-theme.min.css' %}"/>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+    <ul class="d-none" id="stock_categories">
+        {% for category in categories %}
+            <li data-id="{{ category.id }}" data-name="{{ category.name }}"></li>
+        {% endfor %}
+    </ul>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Магазин</h3>
+                        <div id="shopGrid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Корзина</h3>
+                        <div id="cartGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static 'js/jsgrid.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/stock_category_list.js' %}"></script>
+    <script>
+        let shop = $('#shopGrid');
+        shop.jsGrid({
+            width: "100%",
+            height: "auto",
+
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            autoload: true,
+
+            deleteConfirm: "Вы действительно хотите удалить категорию?",
+
+            controller: {
+                loadData: function (data) {
+                    let d = $.Deferred();
+                    $.ajax({
+                        url: "{% url 'shop' %}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: data,
+                    }).done(function (result) {
+                        console.log(result);
+                        d.resolve(result);
+                    });
+                    return d.promise();
+                },
+            },
+            fields: [
+                {name: "id", type: "hidden", title: "#", width: 25},
+                {name: "category_id", type: "select", title: "Категория", items: categories, valueField: "id", textField: "name"},
+                {name: "profile_name", type: "text", title: "Профиль", width: 150},
+                {name: "size", type: "text", title: "Размер", width: 80},
+                {name: "quantity", type: "hidden", title: "Кол.", width: 60},
+                {name: "type_product", type: "select", title: "Кол.", items: type_quantity, valueField: "type", textField: "name", width: 50},
+                {name: "price_sell", type: "hidden", title: "Продажа", width: 50},
+                {type: "control"}
+            ]
+        })
+    </script>
+
+{% endblock %}

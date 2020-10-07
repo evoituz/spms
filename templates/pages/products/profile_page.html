@@ -71,6 +71,7 @@
                         {% for size in sizes %}
                             {% if forloop.first %}
                                 <th scope="col">Размер</th>
+                                <th scope="col">тонна</th>
                                 {% for item in size.items %}
                                     <th scope="col">{{ item.name }}</th>
                                 {% endfor %}
@@ -93,6 +94,14 @@
                                     {{ size.size }}
                                 </a>
                             </th>
+                            <td>
+                                <a href="#" class="edit_sizes" data-type="text" data-size-pk="{{ size.size_id }}"
+                                   data-pk="{{ size.size_id }}" data-name="tone"
+                                   data-url="{% url 'product-profile' profile.product.id profile.id %}"
+                                   data-original-title="Введите вес в тоннах">
+                                    {{ size.size_tone }}
+                                </a>
+                            </td>
                             {% for item in size.items %}
                                 <td>
                                     <a href="#" class="edit_items" data-type="text" data-size-pk="{{ size.size_id }}"

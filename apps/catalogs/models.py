@@ -45,6 +45,7 @@ class ProductProfileSize(models.Model):
     product_profile = models.ForeignKey(ProductProfile, verbose_name='Профиль товара', related_name='sizes',
                                         on_delete=models.CASCADE, null=True)
     size = models.CharField('Размер', max_length=250, blank=True)
+    tone = models.IntegerField('Тонна', default=0)
 
     price_usd = models.DecimalField('Цена в USD', decimal_places=2, max_digits=12, null=True, blank=True)
     price_uzs = models.DecimalField('Цена в UZS', decimal_places=0, max_digits=15, null=True, blank=True)
@@ -83,6 +84,13 @@ class ProductProfileSize(models.Model):
     def get_uzs(self):
         conf = GeneralSettings().load()
         return round(self.get_algorithm() * float(conf.course_usd_to_uzs), 3)
+
+    def get_meter(self):
+        if self.tone == 0:  # Если количество тон не указано
+            return 0
+        meter = self.items.first()  # получение метров в 1й тонее / Не стабильное получение
+        quantity = self.tone * int(meter.value)  # количество метров
+        return quantity
 
     def __str__(self):
         return self.size

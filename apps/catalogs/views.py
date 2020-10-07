@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView, DetailView
 
 from apps.catalogs.models import *
+from apps.stock.models import Stock, StockCategory
 
 
 def checking_value(val):
@@ -13,6 +14,28 @@ def checking_value(val):
     if val.find(',') != -1:
         result = val.replace(',', '.')
     return float(result)
+
+
+def create_stock_meter(size_obj):
+    """Добавляет в склад товар - только если заполнены поля tone и sell_price_uzs"""
+    if size_obj.get_meter() != 0 and size_obj.sell_price_uzs:  # Не заполнено поле "tone" в объекте моделя ProductProfileSize
+        product_category = size_obj.product_profile.product
+        profile = size_obj.product_profile
+
+        category, _ = StockCategory.objects.get_or_create(name=product_category.name)
+
+        values_for_update = {
+            'category': category,
+            'profile_name': profile.name,
+            'size': size_obj.size,
+            'quantity': size_obj.get_meter(),
+            'type_product': 'm',
+            'price_sell': size_obj.sell_price_uzs,
+        }
+        stock, _ = Stock.objects.update_or_create(
+            category=category, profile_name=profile.name, size=size_obj.size,
+            defaults=values_for_update
+        )
 
 
 class PriceListViews(TemplateView):
@@ -48,6 +71,7 @@ class ProductProfileViews(DetailView):
             data = {
                 'size': size.size,
                 'size_id': size.id,
+                'size_tone': size.tone,
                 'algorithm': size.get_algorithm(),
                 'uzs': size.get_uzs(),
                 'sell_price_usd': size.sell_price_usd,
@@ -74,10 +98,9 @@ class ProductProfileViews(DetailView):
         pk = int(request.POST.get('pk'))
 
         profile = ProductProfile.objects.get(product__id=int(product_id), id=int(profile_id))
+        size = profile.sizes.get(id=pk)
         if name == 'size':
-            size = profile.sizes.get(id=pk)
             size.size = value
-            size.save()
         if name == 'item':
             item = ProductProfileSizeItem.objects.get(id=pk)
             if value.find(',') != -1:
@@ -86,17 +109,18 @@ class ProductProfileViews(DetailView):
                 item.value = float(value)
             item.save()
         if name == 'sell_price_usd':
-            size = profile.sizes.get(id=pk)
             size.sell_price_usd = float(value)
-            size.save()
         if name == 'sell_price_uzs':
-            size = profile.sizes.get(id=pk)
             size.sell_price_uzs = float(value)
-            size.save()
         if name == 'notes':
-            size = profile.sizes.get(id=pk)
             size.notes = value
-            size.save()
+        if name == 'tone':
+            size.tone = int(value)
+        size.save()
+
+        list_names = ['sell_price_uzs', 'tone']
+        if name in list_names:
+            create_stock_meter(size)
 
         return JsonResponse({'ok': 'success'})
         # return redirect(reverse('product-profile', None, (product_id, profile_id)))
