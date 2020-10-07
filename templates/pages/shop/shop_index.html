@@ -70,6 +70,10 @@
                     </div>
                     <input id="customerName" type="text" class="form-control form-value" name="customerName"
                            placeholder="Имя покупателя (по желанию)">
+                    <select name="paidOrder" id="paidOrder">
+                        <option value="0">Оплачен</option>
+                        <option value="1">В долг</option>
+                    </select>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
@@ -130,18 +134,24 @@
             }
 
             $('.totalCost').text(totalPrice + ' сум');
-            return totalPrice
         }
 
-        $('#confirmSell').click(function (e) {
+        $('#confirmSell').click(function () {
             let trs = $('#orderFields').children('tr')
-            let data = {'items': [], 'total': 0, 'customer': ''}
-            for(let i = 0; i < trs.length; i++){
+            let data = {'items': [], 'paid': true, 'customer': ''}
+            for (let i = 0; i < trs.length; i++) {
                 let item = $(trs[i]).children('td:last').text()
                 data['items'].push(item)
             }
-            data['total'] = calculateTotalPrice()
             data['customer'] = $('#customerName').val()
+            data['paid'] = $('#paidOrder').val() === '0'
+            location.reload(true)
+            $.ajax({
+                url: "{% url 'create-order' %}",
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+            })
         })
 
         $('#sell').click(function () {
