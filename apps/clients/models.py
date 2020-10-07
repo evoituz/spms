@@ -14,7 +14,7 @@ class Client(models.Model):
 
 
 class Order(models.Model):
-    client = models.ForeignKey(Client, verbose_name='Клиент', on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, verbose_name='Клиент', on_delete=models.CASCADE, blank=True)
 
     created_dt = models.DateTimeField('Дата и время покупки', auto_now_add=True)
 
@@ -26,13 +26,13 @@ class Order(models.Model):
         return sum([item.price for item in self.items.all()])
 
     def __str__(self):
-        return self.client.name
+        return 'Order #%s' % self.id
 
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, verbose_name='Заказ', related_name='items', on_delete=models.CASCADE)
-    product_title = models.CharField('Название товара', max_length=250)
-    quantity = models.CharField('Количество', max_length=250)  # Количество и тип количество (4000 гр.)
+    product_title = models.CharField('Название товара', max_length=250)  # StockCategory.name Stock.profile_nam Stock.size
+    quantity = models.CharField('Количество', max_length=250)  # Количество и тип количество (4000 гр.) 300гр./3шт./230м.
     price = models.DecimalField('Общая сумма', max_digits=15, decimal_places=0)
 
     class Meta:

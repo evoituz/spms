@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, DetailView
 
-from apps.catalogs.models import *
+from apps.catalogs import models as catalog_models
 from apps.stock.models import Stock, StockCategory
 
 
@@ -43,18 +43,18 @@ class PriceListViews(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        context['products'] = Product.objects.all()
+        context['products'] = catalog_models.Product.objects.all()
         return self.render_to_response(context)
 
     def post(self, request):
         data = request.POST.get('product_name')
         if data:
-            Product.objects.create(name=data)
+            catalog_models.Product.objects.create(name=data)
         return redirect(reverse('products'))
 
 
 class ProductProfileViews(DetailView):
-    object = ProductProfile
+    object = catalog_models.ProductProfile
     pk_url_kwarg = 'profile_id'
     template_name = 'pages/products/profile_page.html'
     product_id = None
@@ -64,8 +64,8 @@ class ProductProfileViews(DetailView):
         self.product_id = kwargs.get('product_id')
         self.profile_id = kwargs.get('profile_id')
         context = self.get_context_data(**kwargs)
-        product = Product.objects.get(id=int(self.product_id))
-        context['profile'] = ProductProfile.objects.get(product=product, id=int(self.profile_id))
+        product = catalog_models.Product.objects.get(id=int(self.product_id))
+        context['profile'] = catalog_models.ProductProfile.objects.get(product=product, id=int(self.profile_id))
         sizes = []
         for size in context['profile'].sizes.all():
             data = {
@@ -85,8 +85,8 @@ class ProductProfileViews(DetailView):
         return self.render_to_response(context)
 
     def get_queryset(self):
-        product = Product.objects.get(id=self.profile_id)
-        profile = ProductProfile.objects.get(product=product, id=self.profile_id)
+        product = catalog_models.Product.objects.get(id=self.profile_id)
+        profile = catalog_models.ProductProfile.objects.get(product=product, id=self.profile_id)
         return profile
 
     def post(self, request, *args, **kwargs):
@@ -97,12 +97,12 @@ class ProductProfileViews(DetailView):
         value = request.POST.get('value')
         pk = int(request.POST.get('pk'))
 
-        profile = ProductProfile.objects.get(product__id=int(product_id), id=int(profile_id))
+        profile = catalog_models.ProductProfile.objects.get(product__id=int(product_id), id=int(profile_id))
         size = profile.sizes.get(id=pk)
         if name == 'size':
             size.size = value
         if name == 'item':
-            item = ProductProfileSizeItem.objects.get(id=pk)
+            item = catalog_models.ProductProfileSizeItem.objects.get(id=pk)
             if value.find(',') != -1:
                 item.value = float(value.replace(',', '.'))
             else:
@@ -129,15 +129,15 @@ class ProductProfileViews(DetailView):
 def add_size_to_profile(request, product_id, profile_id):
     if request.POST:
         p = request.POST
-        profile = ProductProfile.objects.get(product_id=product_id, id=profile_id)
+        profile = catalog_models.ProductProfile.objects.get(product_id=product_id, id=profile_id)
         size = None
         for k, v in p.items():
             if k == 'csrfmiddlewaretoken':
                 continue
             elif k == 'size':
-                size = ProductProfileSize.objects.create(product_profile=profile, size=v)
+                size = catalog_models.ProductProfileSize.objects.create(product_profile=profile, size=v)
             else:
-                ProductProfileSizeItem.objects.create(size=size, name=k, value=checking_value(v))
+                catalog_models.ProductProfileSizeItem.objects.create(size=size, name=k, value=checking_value(v))
         return redirect(reverse('product-profile', None, (product_id, profile_id)))
 
 
@@ -149,8 +149,8 @@ class ProductProfileAdd(TemplateView):
         print('super', request.user.is_superuser)
         if request.user.is_authenticated and request.user.is_superuser:
             context = self.get_context_data(**kwargs)
-            context['algorithms'] = Algorithm.objects.all()
-            context['product'] = Product.objects.get(id=int(kwargs.get('product_id')))
+            context['algorithms'] = catalog_models.Algorithm.objects.all()
+            context['product'] = catalog_models.Product.objects.get(id=int(kwargs.get('product_id')))
             context['quantity_tables'] = [i for i in range(1, 51)]
             return self.render_to_response(context)
         return redirect(reverse('products'))
@@ -162,16 +162,16 @@ class ProductProfileAdd(TemplateView):
         attr_names = p.getlist('attr_name')
         sizes = p.getlist('size')
 
-        alg = Algorithm.objects.get(id=int(algorithm))
-        product = Product.objects.get(id=product_id)
-        profile = ProductProfile.objects.create(product=product, name=profile_name, algorithm=alg)
+        alg = catalog_models.Algorithm.objects.get(id=int(algorithm))
+        product = catalog_models.Product.objects.get(id=product_id)
+        profile = catalog_models.ProductProfile.objects.create(product=product, name=profile_name, algorithm=alg)
         try:
             for index, size in enumerate(sizes):
                 if size:
-                    s = ProductProfileSize.objects.create(product_profile=profile, size=size)
+                    s = catalog_models.ProductProfileSize.objects.create(product_profile=profile, size=size)
                     for i, attr in enumerate(attr_names):
                         if attr:
-                            ProductProfileSizeItem.objects.create(
+                            catalog_models.ProductProfileSizeItem.objects.create(
                                 size=s, name=attr, value=checking_value(p.getlist('items[{}]'.format(index + 1))[i])
                             )
         except Exception as e:
