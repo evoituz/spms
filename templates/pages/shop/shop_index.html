@@ -18,9 +18,9 @@
         {% endfor %}
     </ul>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-9">
+            <div class="col-8">
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Магазин</h3>
@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Корзина</h3>
@@ -84,6 +84,22 @@
                 {type: "control"}
             ]
         })
+
+        let cart = $('#cartGrid');
+        cart.jsGrid({
+            width: "100%",
+
+            deleteConfirm: "Вы действительно хотите удалить товар из корзины?",
+
+            fields: [
+                {name: "id", type: "number", title: "#", width: 25},  // Stock ID
+                {name: "title", type: "text", title: "Название", width: 140},  // Category, Stock - for info
+                {name: "quantity", type: "number", title: "Количество", width: 70},
+                {name: "quantity_type", type: "text", title: "Тип", width: 30},
+                {name: "price", type: "number", title: "Цена", width: 40},
+                {type: "control"}
+            ]
+        });
     </script>
 
 {% endblock %}
