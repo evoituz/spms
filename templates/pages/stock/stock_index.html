@@ -68,7 +68,15 @@
                         type: 'GET',
                         dataType: 'json',
                         data: data,
-                    }).done(function (result) {
+                    }).done(function (response) {
+                        let result = $.grep(response, function (item) {
+                            console.log(item)
+                            console.log(!data.profile_name.toLowerCase())
+                            return (!data.category_id || item.category_id === data.category_id) &&
+                                (!data.profile_name.toLowerCase() || item.profile_name.toLowerCase().indexOf(data.profile_name.toLowerCase()) > -1) &&
+                                (!data.size.toLowerCase() || item.size.toLowerCase().indexOf(data.size.toLowerCase()) > -1)
+                        });
+
                         d.resolve(result);
                     });
                     return d.promise();
@@ -102,11 +110,26 @@
 
             fields: [
                 {name: "id", type: "hidden", title: "#", width: 20},
-                {name: "category_id", type: "select", title: "Категория", items: categories, valueField: "id", textField: "name"},
+                {
+                    name: "category_id",
+                    type: "select",
+                    title: "Категория",
+                    items: categories,
+                    valueField: "id",
+                    textField: "name"
+                },
                 {name: "profile_name", type: "text", title: "Профиль", width: 150},
                 {name: "size", type: "text", title: "Размер", width: 80},
                 {name: "quantity", type: "number", title: "Кол.", width: 60},
-                {name: "type_product", type: "select", title: "Кол.", items: type_quantity, valueField: "type", textField: "name", width: 50},
+                {
+                    name: "type_product",
+                    type: "select",
+                    title: "Кол.",
+                    items: type_quantity,
+                    valueField: "type",
+                    textField: "name",
+                    width: 50
+                },
                 {name: "price_purchase", type: "number", title: "Стоим.", width: 50},
                 {name: "price_arrival", type: "number", title: "Обошл.", width: 50},
                 {name: "price_sell", type: "number", title: "Продажа", width: 50},
@@ -138,7 +161,6 @@
                         dataType: 'json',
                         data: data,
                     }).done(function (result) {
-                        console.log(result);
                         d.resolve(result);
                     });
                     return d.promise();
