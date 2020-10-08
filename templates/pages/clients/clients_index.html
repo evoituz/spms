@@ -80,7 +80,13 @@
             },
             fields: [
                 {name: "id", type: "hidden", title: "#", width: 25},
-                {name: "name", type: "text", title: "Имя", width: 150},
+                {
+                    name: "name", type: "text", title: "Имя", width: 150, itemTemplate: function (value, item) {
+                        let divBlock = $('<a>').attr('href', `/client/${item.id}/`)
+                        divBlock.append(value)
+                        return divBlock
+                    }
+                },
                 {
                     name: "balance", type: "number", title: "Баланс", width: 60, itemTemplate: function (value, item) {
                         return value + ' сум'

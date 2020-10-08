@@ -58,7 +58,8 @@ class Transaction(models.Model):
     client = models.ForeignKey(Client, verbose_name='Клиент', on_delete=models.CASCADE, blank=True,
                                null=True)  # Не всегда может быть указан клиент, так как покупатель может быть проходцем.
     order = models.ForeignKey(Order, verbose_name='Заказ', on_delete=models.CASCADE,
-                              blank=True)  # Не всегда оплата может производится за заказ, к примеру внесли часть долга
+                              blank=True,
+                              null=True)  # Не всегда оплата может производится за заказ, к примеру внесли часть долга
     amount = models.DecimalField('Сумма', max_digits=15, decimal_places=0)
     paid = models.CharField('Оплата', choices=PAID_STATUS, max_length=50)  # На случай, если заказ был совершён в долг
 
@@ -69,4 +70,9 @@ class Transaction(models.Model):
         verbose_name_plural = 'Транзакции'
 
     def __str__(self):
-        return str(self.order.created_dt)
+        try:
+            value = str(self.order.created_dt)
+        except AttributeError:
+            value = self.client.name
+
+        return value
