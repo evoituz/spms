@@ -102,7 +102,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="customPrice" class="col-form-label" id="quantityLabel">Кол-во:</label>
+                        <label for="quantity" class="col-form-label" id="quantityLabel">Кол-во:</label>
                         <input id="quantity" type="number" min="0" step="any"
                                class="form-control form-value" value="0"
                                name="quantity">
@@ -131,6 +131,7 @@
     <script>
 
         $('.js-data-example-ajax').select2({
+
             ajax: {
                 delay: 250,
                 url: '{% url 'get-clients' %}',
@@ -142,13 +143,14 @@
                     for (let i = 0; i < data.length; i++) {
                         result.push({'id': data[i].pk, 'text': data[i].fields.name})
                     }
-                    console.log(result)
+
                     return {
                         results: result
                     };
                 },
-            },
 
+            },
+            tags: true,
             minimumInputLength: 2,
             templateResult: formatRepo,
             templateSelection: formatRepoSelection
@@ -156,15 +158,16 @@
 
         function formatRepo(repo) {
             if (repo.loading) {
-                return repo.text;
+                return repo.text
             }
-
             let $container = $(
                 "<div class='select2-result-repository clearfix'>" +
                 "<div class='select2-result-repository__title'></div>" +
                 "</div>"
             );
+
             $container.find(".select2-result-repository__title").text(repo.text);
+
 
             return $container;
         }
@@ -182,24 +185,26 @@
             }
 
             $('.totalCost').text(totalPrice + ' сум');
+            return totalPrice
         }
 
         $('#confirmSell').click(function () {
             let trs = $('#orderFields').children('tr')
-            let data = {'items': [], 'paid': true, 'customer': ''}
+            let data = {'items': [], 'paid': true, 'customer': '', 'total_price': 0}
             for (let i = 0; i < trs.length; i++) {
                 let item = $(trs[i]).children('td:last').text()
                 data['items'].push(item)
             }
-            data['customer'] = $('#customerName').val()
+            data['customer'] = $('.js-data-example-ajax').val()
             data['paid'] = $('#paidOrder').val() === '0'
-            location.reload(true)
+            data['total_price'] = calculateTotalPrice()
             $.ajax({
                 url: "{% url 'create-order' %}",
                 type: 'POST',
                 dataType: 'json',
                 data: data,
             })
+            location.reload(true)
         })
 
         $('#sell').click(function () {
