@@ -14,9 +14,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('settings/', main_views.SettingsViews.as_view(), name='settings'),
 
-    path('product/<int:product_id>/profile/<int:profile_id>/', catalog_views.ProductProfileViews.as_view(), name='product-profile'),
-    path('product/<int:product_id>/profile/add/', catalog_views.ProductProfileAdd.as_view(), name='product-profile-add'),
-    path('product/<int:product_id>/profile/<int:profile_id>/size/add/', catalog_views.add_size_to_profile, name='add-size-to-profile'),
+    path('product/<int:product_id>/profile/<int:profile_id>/', catalog_views.ProductProfileViews.as_view(),
+         name='product-profile'),
+    path('product/<int:product_id>/profile/add/', catalog_views.ProductProfileAdd.as_view(),
+         name='product-profile-add'),
+    path('product/<int:product_id>/profile/<int:profile_id>/size/add/', catalog_views.add_size_to_profile,
+         name='add-size-to-profile'),
     path('products/', catalog_views.PriceListViews.as_view(), name='products'),
 
     path('stock/control/', stock_views.stock_control, name='stock-control'),
@@ -29,7 +32,9 @@ urlpatterns = [
 
     path('order/', order_views.create_order, name='create-order'),
 
-    path('clients/', clients_views.get_clients, name='get-clients')
+    path('clients/get-clients/', clients_views.get_clients, name='get-clients'),
+    path('clients/update-client/<int:id>/', clients_views.update_client, name='update-client'),
+    path('clients/', clients_views.ClientsListView.as_view(), name='clients')
 ]
 
 if settings.DEBUG:

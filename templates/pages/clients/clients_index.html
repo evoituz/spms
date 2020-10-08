@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid.min.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid-theme.min.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/select2.min.css' %}"/>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+    <ul class="d-none" id="stock_categories">
+        {% for category in categories %}
+            <li data-id="{{ category.id }}" data-name="{{ category.name }}"></li>
+        {% endfor %}
+    </ul>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Клиенты</h3>
+                        <div id="clientGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static 'js/jsgrid.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/stock_category_list.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/select2.full.min.js' %}"></script>
+    <script>
+        let clients = $('#clientGrid');
+        clients.jsGrid({
+            width: "100%",
+            height: "auto",
+
+            filtering: true,
+            inserting: false,
+            editing: true,
+            sorting: true,
+            autoload: true,
+
+            deleteConfirm: "Вы действительно хотите удалить категорию?",
+
+            controller: {
+                loadData: function (data) {
+                    let d = $.Deferred();
+                    $.ajax({
+                        url: "{% url 'clients' %}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: data,
+                    }).done(function (response) {
+                        let result = $.grep(response, function (item) {
+                            return (!data.name.toLowerCase() || item.name.toLowerCase().indexOf(data.name.toLowerCase()) > -1)
+                        });
+                        d.resolve(result);
+                    });
+                    return d.promise();
+                },
+                updateItem: function (item) {
+                    console.log(item)
+                    return $.ajax({
+                        type: "POST",
+                        url: `update-client/${item.id}/`,
+                        datatype: 'json',
+                        data: item
+                    });
+                },
+            },
+            fields: [
+                {name: "id", type: "hidden", title: "#", width: 25},
+                {name: "name", type: "text", title: "Имя", width: 150},
+                {
+                    name: "balance", type: "number", title: "Баланс", width: 60, itemTemplate: function (value, item) {
+                        return value + ' сум'
+                    }
+                },
+                {
+                    type: "control", deleteButton: false, width: 30
+                },
+            ]
+        })
+
+    </script>
+
+{% endblock %}
