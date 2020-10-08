@@ -34,7 +34,10 @@ urlpatterns = [
 
     path('clients/get-clients/', clients_views.get_clients, name='get-clients'),
     path('clients/update-client/<int:id>/', clients_views.update_client, name='update-client'),
-    path('clients/', clients_views.ClientsListView.as_view(), name='clients')
+    path('clients/', clients_views.ClientsListView.as_view(), name='clients'),
+    path('client/<int:pk>/', clients_views.ClientView.as_view(), name='client'),
+
+    path('transactions/<int:pk>/', clients_views.TransactionView.as_view(), name='transactions')
 ]
 
 if settings.DEBUG:

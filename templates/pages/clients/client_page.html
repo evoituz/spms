@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid.min.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid-theme.min.css' %}"/>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card p-3">
+            <div class="card-title">Клиент: {{ user.name }}</div>
+            <div class="card-title">Баланс: <span class="user-balance">{{ user.balance }}</span> сум</div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Транзакции</h3>
+                        <div id="transactionGrid"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Заказы</h3>
+                        <div id="ordersGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript" src="{% static 'js/jsgrid.min.js' %}"></script>
+
+    <script>
+        let orders = $('#ordersGrid');
+        orders.jsGrid({
+            width: "100%",
+            height: "auto",
+
+            filtering: true,
+            inserting: false,
+            editing: false,
+            sorting: true,
+            autoload: true,
+
+            controller: {
+                loadData: function (data) {
+                    let d = $.Deferred();
+                    data.url_id = location.pathname.split('/')[2]
+                    $.ajax({
+                        url: location.pathname,
+                        type: 'GET',
+                        dataType: 'json',
+                        data: data,
+                    }).done(function (response) {
+                        let result = $.grep(response, function (item) {
+                            let date = new Date(item.created_dt)
+                            let dateTime = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+                            item.created_dt = dateTime
+                            return item
+                        });
+
+                        d.resolve(result);
+                    });
+                    return d.promise();
+                },
+            },
+            fields: [
+                {name: "items__product_title", type: "text", title: "Наименование", width: 25},
+                {
+                    name: "items__price", type: "text", title: "Цена", width: 25, itemTemplate: function (value, item) {
+                        return value + ' сум'
+                    }
+                },
+                {
+                    name: "paid_price",
+                    type: "text",
+                    title: "Оплачено",
+                    width: 25,
+                    itemTemplate: function (value, item) {
+                        return value + ' сум'
+                    }
+                },
+                {
+                    name: "debt_price", type: "text", title: "В долг", width: 25, itemTemplate: function (value, item) {
+                        return value + ' сум'
+                    }
+                },
+                {name: "created_dt", type: "text", title: "Дата", width: 25},
+
+            ]
+        })
+
+        let transactions = $('#transactionGrid');
+        transactions.jsGrid({
+            width: "100%",
+            deleteConfirm: "Вы действительно хотите удалить товар из корзины?",
+
+            filtering: true,
+            inserting: true,
+            editing: false,
+            sorting: true,
+            autoload: true,
+
+            controller: {
+                loadData: function (data) {
+                    let d = $.Deferred();
+                    data.url_id = location.pathname.split('/')[2]
+                    $.ajax({
+                        url: location.pathname.replace('client', 'transactions'),
+                        type: 'GET',
+                        dataType: 'json',
+                        data: data,
+                    }).done(function (response) {
+                        let result = $.grep(response, function (item) {
+                            let date = new Date(item.created_dt)
+                            let dateTime = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
+                            item.created_dt = dateTime
+                            return item
+                        });
+                        d.resolve(result);
+                    });
+                    return d.promise();
+                },
+                insertItem: function (item) {
+                    return $.ajax({
+                        type: "POST",
+                        url: location.pathname.replace('client', 'transactions'),
+                        datatype: 'json',
+                        data: item
+                    }).done(function (response) {
+                        let balance = $('.user-balance')
+                        balance.text(Number(balance.text()) + Number(response.amount))
+                    });
+                },
+            },
+
+            fields: [
+                {
+                    name: "amount", type: "text", title: "Сумма", width: 100, itemTemplate: function (value, item) {
+                        return value + ' сум'
+                    }
+                },
+                {name: "created_dt", type: "hidden", title: "Дата"},
+                {type: 'control', editButton: false, deleteButton: false}
+            ]
+        });
+    </script>
+{% endblock %}
