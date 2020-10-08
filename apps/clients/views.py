@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.core import serializers
+from django.http import JsonResponse
+from .models import Client
 
-# Create your views here.
+
+def get_clients(request):
+    clients = Client.objects.filter(name__icontains=request.GET.get('q'))
+    data = serializers.serialize('json', list(clients), fields=('name',))
+    return JsonResponse(data, safe=False)

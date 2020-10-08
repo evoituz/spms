@@ -4,6 +4,7 @@
 {% block css %}
     <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid.min.css' %}"/>
     <link type="text/css" rel="stylesheet" href="{% static 'css/jsgrid-theme.min.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/select2.min.css' %}"/>
 {% endblock %}
 
 {% block title %}
@@ -68,8 +69,11 @@
                     </table>
                     <div class="float-left w-50 font-weight-bold">Общая стоимость: <span class="totalCost"></span>
                     </div>
-                    <input id="customerName" type="text" class="form-control form-value" name="customerName"
-                           placeholder="Имя покупателя (по желанию)">
+                    {#                    <input id="customerName" type="text" class="form-control form-value" name="customerName"#}
+                    {#                           placeholder="Имя покупателя (по желанию)">#}
+                    <select class="js-data-example-ajax">
+                        <option value="0" selected="selected">Не известно</option>
+                    </select>
                     <select name="paidOrder" id="paidOrder">
                         <option value="0">Оплачен</option>
                         <option value="1">В долг</option>
@@ -98,7 +102,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="customPrice" class="col-form-label">Кол-во:</label>
+                        <label for="customPrice" class="col-form-label" id="quantityLabel">Кол-во:</label>
                         <input id="quantity" type="number" min="0" step="any"
                                class="form-control form-value" value="0"
                                name="quantity">
@@ -123,7 +127,51 @@
 {% block js %}
     <script type="text/javascript" src="{% static 'js/jsgrid.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/stock_category_list.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/select2.full.min.js' %}"></script>
     <script>
+
+        $('.js-data-example-ajax').select2({
+            ajax: {
+                delay: 250,
+                url: '{% url 'get-clients' %}',
+                dataType: 'json',
+                processResults: function (data) {
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    let result = []
+                    data = JSON.parse(data)
+                    for (let i = 0; i < data.length; i++) {
+                        result.push({'id': data[i].pk, 'text': data[i].fields.name})
+                    }
+                    console.log(result)
+                    return {
+                        results: result
+                    };
+                },
+            },
+
+            minimumInputLength: 2,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        function formatRepo(repo) {
+            if (repo.loading) {
+                return repo.text;
+            }
+
+            let $container = $(
+                "<div class='select2-result-repository clearfix'>" +
+                "<div class='select2-result-repository__title'></div>" +
+                "</div>"
+            );
+            $container.find(".select2-result-repository__title").text(repo.text);
+
+            return $container;
+        }
+
+        function formatRepoSelection(repo) {
+            return repo.text;
+        }
 
         const calculateTotalPrice = () => {
             let totalPrice = 0
@@ -260,7 +308,16 @@
                         el.click(function () {
                             let modalForm = $('#addToCartModal')
                             let i = JSON.stringify(item)
+                            let label = $('#quantityLabel')
                             $('#item').remove()
+                            if (item.type_product === 'pc') {
+                                label.text('Кол-во: ')
+                            } else if (item.type_product === 'g') {
+                                label.text('В граммах: ')
+                            } else {
+                                label.text('В метрах: ')
+                            }
+
                             modalForm.append(`<div id="item" class="d-none">${i}</div>`)
                             modalForm.modal('show')
                         })

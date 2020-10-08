@@ -8,6 +8,7 @@ from apps.main import views as main_views
 from apps.stock import views as stock_views
 from apps.shop import views as shop_views
 from apps.orders import views as order_views
+from apps.clients import views as clients_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +27,9 @@ urlpatterns = [
 
     path('', main_views.HomePageViews.as_view(), name='home-page'),
 
-    path('order/', order_views.create_order, name='create-order')
+    path('order/', order_views.create_order, name='create-order'),
+
+    path('clients/', clients_views.get_clients, name='get-clients')
 ]
 
 if settings.DEBUG:
