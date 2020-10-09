@@ -115,7 +115,7 @@ class ProductProfileViews(DetailView):
         if name == 'notes':
             size.notes = value
         if name == 'tone':
-            size.tone = int(value)
+            size.tone = float(value)
         size.save()
 
         list_names = ['sell_price_uzs', 'tone']

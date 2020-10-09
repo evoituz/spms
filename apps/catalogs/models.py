@@ -45,7 +45,7 @@ class ProductProfileSize(models.Model):
     product_profile = models.ForeignKey(ProductProfile, verbose_name='Профиль товара', related_name='sizes',
                                         on_delete=models.CASCADE, null=True)
     size = models.CharField('Размер', max_length=250, blank=True)
-    tone = models.IntegerField('Тонна', default=0)
+    tone = models.FloatField('Тонна', default=0)
 
     price_usd = models.DecimalField('Цена в USD', decimal_places=2, max_digits=12, null=True, blank=True)
     price_uzs = models.DecimalField('Цена в UZS', decimal_places=0, max_digits=15, null=True, blank=True)
