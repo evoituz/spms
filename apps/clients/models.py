@@ -27,6 +27,31 @@ class Order(models.Model):
     def get_total_price(self):
         return sum([item.price for item in self.items.all()])
 
+    def get_items_to_string(self):
+        items = list(self.items.values('product_title', 'quantity', 'price'))
+        result = [f'{i+1}) {item["product_title"]}: {item["quantity"]} - {item["price"]} сум' for i, item in enumerate(items)]
+        print(result)
+        return result
+
+    def get_transaction(self):
+        obj = Transaction.objects.get(order_id=self.id)
+        return {'amount': obj.amount, 'paid': True if obj.paid == 'payment' else False}
+
+    def get_pay(self):
+        transaction = self.get_transaction()
+        print(transaction['paid'])
+        if transaction['paid']:
+            return transaction['amount']
+        return 0
+
+    def get_debt(self):
+        transaction = self.get_transaction()
+        if not transaction['paid']:
+            return transaction['amount']
+        return 0
+
+
+
     def __str__(self):
         return 'Order #%s' % self.id
 

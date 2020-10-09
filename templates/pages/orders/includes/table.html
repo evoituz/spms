@@ -1,0 +1,29 @@
+<table class="table text-monospace" style="font-size: 14px;">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Дата и время</th>
+        <th scope="col">Клиент</th>
+        <th scope="col">Товары</th>
+        <th scope="col">Итоговая сумма</th>
+        <th scope="col">Оплачено</th>
+        <th scope="col">Долг</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in orders %}
+        <tr>
+            <th scope="row">{{ order.id }}</th>
+            <td>{{ order.created_dt }}</td>
+            <td>{% if order.client %}{{ order.client }}{% else %}{% endif %}</td>
+            <td>{% for item in order.get_items_to_string %}
+                {{ item }} <br>
+            {% endfor %}
+            </td>
+            <td>{{ order.get_total_price }} сум</td>
+            <td>{{ order.get_pay }}</td>
+            <td>{{ order.get_debt }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

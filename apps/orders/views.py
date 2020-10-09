@@ -1,6 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.generic import ListView, TemplateView
+
 from apps.clients import models as clients_models
+from apps.clients.models import Order
 from apps.stock import models as stock_models
 import json
 
@@ -33,14 +36,28 @@ def create_order(request):
         item.quantity -= int(quantity)
         item.save(update_fields=['quantity', ])
         product_title = item.category.name + ' ' + item.profile_name + ' ' + item.size
-        clients_models.OrderItem.objects.create(order=order, price=price, quantity=quantity,
+        quantity_types = {'pc': 'шт', 'g': 'гр', 'm': 'м'}
+        quantity_type = quantity_types[item.type_product]
+        clients_models.OrderItem.objects.create(order=order, price=price, quantity=quantity + quantity_type,
                                                 product_title=product_title)
 
     if client:
         clients_models.Transaction.objects.create(client=client, order=order, paid='payment' if paid else 'debt',
                                                   amount=order.get_total_price())
     else:
-        clients_models.Transaction.objects.create(order=order, paid=paid,
+        clients_models.Transaction.objects.create(order=order, paid='payment' if paid else 'debt',
                                                   amount=order.get_total_price())
 
     return JsonResponse({'success': 'ok'})
+
+
+class OrderListView(ListView):
+    model = Order
+    context_object_name = 'orders'
+    template_name = 'pages/orders/orders_index.html'
+
+    # def get(self, request, *args, **kwargs):
+    #     if request.is_ajax():
+    #         orders = list(Order.objects.values())
+    #         return JsonResponse(orders, safe=False)
+    #     return super().get(request, *args, **kwargs)

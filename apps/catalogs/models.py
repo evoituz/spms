@@ -36,6 +36,7 @@ class ProductProfile(models.Model):
     class Meta:
         verbose_name = 'Профиль'
         verbose_name_plural = 'Профили'
+        ordering = ['id']
 
     def __str__(self):
         return self.name
@@ -57,6 +58,7 @@ class ProductProfileSize(models.Model):
     class Meta:
         verbose_name = 'Размер'
         verbose_name_plural = 'Размеры'
+        ordering = ['id']
 
     def save(self, *args, **kwargs):
         if not self.price_uzs and self.price_usd:

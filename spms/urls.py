@@ -28,8 +28,7 @@ urlpatterns = [
 
     path('shop/', shop_views.ShopProductListView.as_view(), name='shop'),
 
-    path('', main_views.HomePageViews.as_view(), name='home-page'),
-
+    path('orders/', order_views.OrderListView.as_view(), name='orders'),
     path('order/', order_views.create_order, name='create-order'),
 
     path('clients/get-clients/', clients_views.get_clients, name='get-clients'),
@@ -37,7 +36,9 @@ urlpatterns = [
     path('clients/', clients_views.ClientsListView.as_view(), name='clients'),
     path('client/<int:pk>/', clients_views.ClientView.as_view(), name='client'),
 
-    path('transactions/<int:pk>/', clients_views.TransactionView.as_view(), name='transactions')
+    path('transactions/<int:pk>/', clients_views.TransactionView.as_view(), name='transactions'),
+
+    path('', main_views.HomePageViews.as_view(), name='home-page'),
 ]
 
 if settings.DEBUG:
