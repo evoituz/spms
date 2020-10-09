@@ -32,11 +32,34 @@ class ClientView(DetailView):
 
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
-            queryset = list(
-                self.model.objects.get(id=self.kwargs['pk']).order_set.all().values('items__product_title',
-                                                                                    'items__price',
-                                                                                    'created_dt',
-                                                                                    'transaction__paid'))
+
+            if request.GET.get('created_dt'):
+                dt = str(request.GET.get('created_dt')).split('.')
+                # проверяю есть ли в запросе день, месяц и год и исходя из этого фильтрую
+                try:
+                    queryset = list(self.model.objects.get(id=self.kwargs['pk']).order_set.filter(created_dt__day=dt[0],
+                                                                                                  created_dt__month=dt[
+                                                                                                      1],
+                                                                                                  created_dt__year=dt[
+                                                                                                      2]).values(
+                        'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
+                except IndexError:
+                    try:
+                        queryset = list(
+                            self.model.objects.get(id=self.kwargs['pk']).order_set.filter(created_dt__day=dt[0],
+                                                                                          created_dt__month=dt[1]
+                                                                                          ).values(
+                                'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
+                    except IndexError:
+                        queryset = list(self.model.objects.get(id=self.kwargs['pk']).order_set.filter(
+                            created_dt__day=dt[0]).values(
+                            'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
+            else:
+                queryset = list(
+                    self.model.objects.get(id=self.kwargs['pk']).order_set.all().values('items__product_title',
+                                                                                        'items__price',
+                                                                                        'created_dt',
+                                                                                        'transaction__paid'))
             for q in queryset:
                 q['paid_price'] = 1
                 if q['transaction__paid'] == 'payment':
@@ -59,11 +82,28 @@ class TransactionView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
-            queryset = list(
-                self.model.objects.filter(client_id=self.request.GET.get('url_id'), order__isnull=True).values(
-                    'created_dt',
-                    'amount',
-                ))
+            if request.GET.get('created_dt'):
+                dt = str(request.GET.get('created_dt')).split('.')
+                queryset = self.model.objects.filter(created_dt__day=dt[0])
+                try:
+                    queryset = queryset.filter(created_dt__month=dt[1])
+                except IndexError:
+                    pass
+                try:
+                    queryset = queryset.filter(created_dt__year=dt[2])
+                except IndexError:
+                    pass
+                queryset = list(
+                    queryset.filter(client_id=self.request.GET.get('url_id'), order__isnull=True).values(
+                        'created_dt',
+                        'amount',
+                    ))
+            else:
+                queryset = list(
+                    self.model.objects.filter(client_id=self.request.GET.get('url_id'), order__isnull=True).values(
+                        'created_dt',
+                        'amount',
+                    ))
             return JsonResponse(queryset, safe=False)
 
     def post(self, request, *args, **kwargs):
