@@ -24,20 +24,20 @@
             <div class="col-8">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title">Магазин</h3>
-                        <div id="shopGrid"></div>
+                        <h3 class="card-title text-monospace">Магазин</h3>
+                        <div id="shopGrid" class="text-monospace" style="font-size: 14px;"></div>
                     </div>
                 </div>
             </div>
             <div class="col-4">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title">Корзина</h3>
-                        <div id="cartGrid"></div>
+                        <h3 class="card-title text-monospace">Корзина</h3>
+                        <div id="cartGrid" class="text-monospace" style="font-size: 14px;"></div>
                     </div>
                 </div>
                 <div class="card p-2">
-                    <div class="d-flex">
+                    <div class="d-flex justify-content-center align-items-center text-monospace">
                         <div class="float-left w-50 font-weight-bold">Общая стоимость: <span class="totalCost"></span>
                         </div>
                         <button id="sell" class="btn btn-success float-right w-50">Продать</button>
@@ -51,7 +51,7 @@
     <div class="modal fade" id="sellProductModal" tabindex="-1" role="dialog"
          aria-labelledby="sellProductModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog text-monospace" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="sellProductModalLabel">Новый заказ</h5>
@@ -67,17 +67,24 @@
                         </thead>
                         <tbody id="orderFields"></tbody>
                     </table>
-                    <div class="float-left w-50 font-weight-bold">Общая стоимость: <span class="totalCost"></span>
-                    </div>
                     {#                    <input id="customerName" type="text" class="form-control form-value" name="customerName"#}
                     {#                           placeholder="Имя покупателя (по желанию)">#}
-                    <select class="js-data-example-ajax">
-                        <option value="0" selected="selected">Не известно</option>
-                    </select>
-                    <select name="paidOrder" id="paidOrder">
-                        <option value="0">Оплачен</option>
-                        <option value="1">В долг</option>
-                    </select>
+                    <div class="d-flex">
+                        <div class="w-100 font-weight-bold">
+                            Общая стоимость: <span class="totalCost"></span>
+                        </div>
+                        <select name="paidOrder" id="paidOrder" class="ml-3">
+                            <option value="0">Оплачен</option>
+                            <option value="1">В долг</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="d-flex justify-content-end">
+                        <select class="js-data-example-ajax">
+                            <option value="0" selected="selected">Введите имя клиента</option>
+                        </select>
+                    </div>
+                    <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
@@ -214,9 +221,16 @@
             let cartItems = $('#cartGrid > div.jsgrid-grid-body > table > tbody').children('tr')
             for (let i = 0; i < cartItems.length; i++) {
                 let item = JSON.parse($(cartItems[i]).children('td:nth-child(7)').text());
+                let catName = '';
+                for (let j = 0; j < categories.length; j++) {
+                    if (categories[j].id === item['category_id']) {
+                        catName = categories[j].name;
+                        break
+                    }
+                }
                 table.append(`
                     <tr>
-                        <td>${item.profile_name}</td>
+                        <td>${catName} ${item.profile_name} ${item.size}</td>
                         <td>${item.quantity}</td>
                         <td>${item.price_sell}</td>
                         <td class="d-none">${JSON.stringify(item)}</td>
@@ -228,9 +242,18 @@
         $('#addToCart').click(function () {
             let cartGrid = $('#cartGrid');
             let quantity = $('#quantity').val()
-            let item = JSON.parse($('#item').text())
+            let item = JSON.parse($('#item').text());
+            console.log(item);
+            let name = '';
+            for (let i = 0; i < categories.length; i++) {
+                if (categories[i].id === item['category_id']) {
+                    name = `${categories[i].name} ${item['profile_name']} ${item['size']}`
+                    break;
+                }
+            }
 
             item.quantity = quantity;
+            item.name = name;
             if (item.type_product === 'pc' || item.type_product === 'm') {
                 item.price_sell = Number(item.quantity) * Number(item.price_sell);
             } else {
@@ -293,9 +316,9 @@
                     valueField: "id",
                     textField: "name"
                 },
-                {name: "profile_name", type: "text", title: "Профиль", width: 150},
-                {name: "size", type: "text", title: "Размер", width: 80},
-                {name: "quantity", type: "hidden", title: "Кол.", width: 60},
+                {name: "profile_name", type: "text", title: "Профиль"},
+                {name: "size", type: "text", title: "Размер"},
+                {name: "quantity", type: "hidden", title: "Кол."},
                 {
                     name: "type_product",
                     type: "select",
@@ -303,9 +326,8 @@
                     items: type_quantity,
                     valueField: "type",
                     textField: "name",
-                    width: 50
                 },
-                {name: "price_sell", type: "hidden", title: "Продажа", width: 50},
+                {name: "price_sell", type: "hidden", title: "Продажа"},
                 {
                     type: "control", editButton: false, deleteButton: false,
                     itemTemplate: function (value, item) {
@@ -339,12 +361,12 @@
             deleteConfirm: "Вы действительно хотите удалить товар из корзины?",
             fields: [
                 {name: "id", type: "number", title: "#", width: 25},  // Stock ID
-                {name: "profile_name", type: "text", title: "Название", width: 140},  // Category, Stock - for info
-                {name: "quantity", type: "number", title: "Количество", width: 70},
-                {name: "type_product", type: "text", title: "Тип", width: 30},
-                {name: "price_sell", type: "number", title: "Цена", width: 40},
+                {name: "name", type: "text", title: "Название"},  // Category, Stock - for info
+                {name: "quantity", type: "number", title: "Кол.", width: 40},
+                {name: "type_product", type: "text", title: "Тип", width: 25},
+                {name: "price_sell", type: "number", title: "Цена", width: 60},
                 {
-                    type: "control", editButton: false, itemTemplate: function () {
+                    type: "control", width: 25, editButton: false, itemTemplate: function () {
                         let el = $('<input class="jsgrid-button jsgrid-delete-button" type="button" title="Удалить">');
                         el.click(function () {
                             cart.jsGrid("deleteItem", item).done(function () {

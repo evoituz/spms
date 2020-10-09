@@ -12,24 +12,28 @@
 
 {% block content %}
     <div class="container-fluid">
-        <div class="card p-3">
-            <div class="card-title">Клиент: {{ user.name }}</div>
-            <div class="card-title">Баланс: <span class="user-balance">{{ user.balance }}</span> сум</div>
-        </div>
         <div class="row">
-            <div class="col-4">
+            <div class="col-2">
                 <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title">Транзакции</h3>
-                        <div id="transactionGrid"></div>
+                    <div class="card-body" style="font-size: 24px;">
+                        <div class="font-weight-bolder text-monospace">Клиент: {{ user.name }}</div>
+                        <div class="text-monospace badge badge-primary text-wrap font-weight-bolder">Баланс: <span class="user-balance">{{ user.balance }}</span> сум</div>
                     </div>
                 </div>
             </div>
-            <div class="col-8">
+            <div class="col-3">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title">Заказы</h3>
-                        <div id="ordersGrid"></div>
+                        <h3 class="card-title text-monospace">Транзакции</h3>
+                        <div id="transactionGrid" class="text-monospace" style="font-size: 14px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-monospace">Заказы</h3>
+                        <div id="ordersGrid" class="text-monospace" style="font-size: 14px;"></div>
                     </div>
                 </div>
             </div>
@@ -76,9 +80,9 @@
                 },
             },
             fields: [
-                {name: "items__product_title", type: "text", title: "Наименование", width: 25},
+                {name: "items__product_title", type: "text", title: "Наименование"},
                 {
-                    name: "items__price", type: "text", title: "Цена", width: 25, itemTemplate: function (value, item) {
+                    name: "items__price", type: "text", title: "Цена", itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
@@ -86,17 +90,16 @@
                     name: "paid_price",
                     type: "text",
                     title: "Оплачено",
-                    width: 25,
                     itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
                 {
-                    name: "debt_price", type: "text", title: "В долг", width: 25, itemTemplate: function (value, item) {
+                    name: "debt_price", type: "text", title: "В долг", itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
-                {name: "created_dt", type: "text", title: "Дата", width: 25},
+                {name: "created_dt", type: "text", title: "Дата"},
 
             ]
         })
@@ -147,7 +150,7 @@
 
             fields: [
                 {
-                    name: "amount", type: "text", title: "Сумма", width: 100, itemTemplate: function (value, item) {
+                    name: "amount", type: "text", title: "Сумма", itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },

@@ -19,13 +19,13 @@
         {% endfor %}
     </ul>
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <h3 class="card-title">Клиенты</h3>
-                        <div id="clientGrid"></div>
+                        <h3 class="card-title text-monospace">Клиенты</h3>
+                        <div id="clientGrid" class="text-monospace" style="font-size: 14px;"></div>
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
 
             filtering: true,
             inserting: false,
-            editing: true,
+            editing: false,
             sorting: true,
             autoload: true,
 
@@ -64,6 +64,7 @@
                         let result = $.grep(response, function (item) {
                             return (!data.name.toLowerCase() || item.name.toLowerCase().indexOf(data.name.toLowerCase()) > -1)
                         });
+                        console.log(result);
                         d.resolve(result);
                     });
                     return d.promise();

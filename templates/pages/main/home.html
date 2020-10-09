@@ -6,7 +6,38 @@
 {% endblock %}
 
 {% block content %}
-
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center text-monospace"><a href="{% url 'shop' %}">Магазин</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body text-center text-monospace">
+                        <h3 class="card-title"><a href="{% url 'stock' %}">Склад</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body text-center text-monospace">
+                        <h3 class="card-title"><a href="{% url 'products' %}">Каталог</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card">
+                    <div class="card-body text-center text-monospace">
+                        <h3 class="card-title"><a href="{% url 'clients' %}">Клиенты</a></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block js %}
