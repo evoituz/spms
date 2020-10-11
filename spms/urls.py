@@ -28,7 +28,7 @@ urlpatterns = [
 
     path('shop/', shop_views.ShopProductListView.as_view(), name='shop'),
 
-    path('orders/', order_views.OrderListView.as_view(), name='orders'),
+    # path('orders/', order_views.OrderListView.as_view(), name='orders'),
     path('order/', order_views.create_order, name='create-order'),
 
     path('clients/get-clients/', clients_views.get_clients, name='get-clients'),
@@ -37,6 +37,8 @@ urlpatterns = [
     path('client/<int:pk>/', clients_views.ClientView.as_view(), name='client'),
 
     path('transactions/<int:pk>/', clients_views.TransactionView.as_view(), name='transactions'),
+    path('transactions_list/', order_views.TransactionListView.as_view(), name='transactions-page'),
+    path('transaction_api_list/', order_views.transaction_list, name='transactions-list'),
 
     path('', main_views.HomePageViews.as_view(), name='home-page'),
 ]

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, TemplateView
 
 from apps.clients import models as clients_models
-from apps.clients.models import Order
+from apps.clients.models import Order, Transaction
 from apps.stock import models as stock_models
 import json
 
@@ -51,13 +51,45 @@ def create_order(request):
     return JsonResponse({'success': 'ok'})
 
 
-class OrderListView(ListView):
-    model = Order
-    context_object_name = 'orders'
-    template_name = 'pages/orders/orders_index.html'
+class TransactionListView(ListView):
+    model = Transaction
+    context_object_name = 'transactions'
+    template_name = 'pages/transactions/transactions_index.html'
 
-    # def get(self, request, *args, **kwargs):
-    #     if request.is_ajax():
-    #         orders = list(Order.objects.values())
-    #         return JsonResponse(orders, safe=False)
-    #     return super().get(request, *args, **kwargs)
+
+def transaction_list(request):
+    transactions = list()
+    print(request.GET)
+    for transaction in Transaction.objects.all():
+        if transaction.order:
+            transactions.append(
+                {'id': transaction.id,
+                 'created_dt': transaction.created_dt,
+                 'client': transaction.client.name if transaction.client else '',
+                 'products': transaction.order.get_items_to_string(),
+                 'final_sum': transaction.amount,
+                 'paid': transaction.order.get_pay(),
+                 'debt': transaction.order.get_debt()
+                 })
+        else:
+            transactions.append({
+                'id': transaction.id,
+                'created_dt': transaction.created_dt,
+                'client': transaction.client.name if transaction.client else '',
+                'products': '',
+                'final_sum': transaction.amount,
+                'paid': '',
+                'debt': ''
+            })
+    return JsonResponse(transactions, safe=False)
+
+# class OrderListView(ListView):
+#     model = Order
+#     context_object_name = 'orders'
+#     template_name = 'pages/orders/orders_index.html'
+
+# def get(self, request, *args, **kwargs):
+#     if request.is_ajax():
+#         orders = list(Order.objects.values())
+#         return JsonResponse(orders, safe=False)
+#     return super().get(request, *args, **kwargs)
