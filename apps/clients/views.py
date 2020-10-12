@@ -108,7 +108,6 @@ class TransactionView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            print(request.POST)
             client = Client.objects.get(id=kwargs['pk'])
             client.balance += int(request.POST.get('amount'))
             client.save()

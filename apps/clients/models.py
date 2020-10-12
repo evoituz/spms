@@ -30,7 +30,6 @@ class Order(models.Model):
     def get_items_to_string(self):
         items = list(self.items.values('product_title', 'quantity', 'price'))
         result = [f'{i+1}) {item["product_title"]}: {item["quantity"]} - {item["price"]} сум' for i, item in enumerate(items)]
-        print(result)
         return result
 
     def get_transaction(self):
@@ -39,7 +38,6 @@ class Order(models.Model):
 
     def get_pay(self):
         transaction = self.get_transaction()
-        print(transaction['paid'])
         if transaction['paid']:
             return transaction['amount']
         return 0

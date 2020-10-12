@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, TemplateView
-
+from datetime import datetime
 from apps.clients import models as clients_models
 from apps.clients.models import Order, Transaction
 from apps.stock import models as stock_models
@@ -57,15 +57,27 @@ class TransactionListView(ListView):
     template_name = 'pages/transactions/transactions_index.html'
 
 
+def strint_to_datetime(string):
+    return datetime.strptime(string, '%Y-%m-%d')
+
+
 def transaction_list(request):
     transactions = list()
-    print(request.GET)
-    for transaction in Transaction.objects.all():
+
+    transactions_filtered = Transaction.objects.all()
+    if request.GET:
+        if request.GET.get('client') != '0':
+            transactions_filtered = transactions_filtered.filter(client__in=request.GET.get('client'))
+        if request.GET.get('created_dt'):
+            date = strint_to_datetime(request.GET.get('created_dt')[:10])
+            transactions_filtered = transactions_filtered.filter(created_dt__day=date.day, created_dt__month=date.month,
+                                                                 created_dt__year=date.year)
+    for transaction in transactions_filtered:
         if transaction.order:
             transactions.append(
                 {'id': transaction.id,
                  'created_dt': transaction.created_dt,
-                 'client': transaction.client.name if transaction.client else '',
+                 'client': {'name': transaction.client.name, 'id': transaction.client.id} if transaction.client else {},
                  'products': transaction.order.get_items_to_string(),
                  'final_sum': transaction.amount,
                  'paid': transaction.order.get_pay(),
@@ -75,7 +87,7 @@ def transaction_list(request):
             transactions.append({
                 'id': transaction.id,
                 'created_dt': transaction.created_dt,
-                'client': transaction.client.name if transaction.client else '',
+                'client': {'name': transaction.client.name, 'id': transaction.client.id} if transaction.client else {},
                 'products': '',
                 'final_sum': transaction.amount,
                 'paid': '',

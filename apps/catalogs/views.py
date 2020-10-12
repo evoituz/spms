@@ -90,7 +90,6 @@ class ProductProfileViews(DetailView):
         return profile
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         product_id = kwargs.get('product_id')
         profile_id = kwargs.get('profile_id')
         name = request.POST.get('name')
@@ -145,8 +144,6 @@ class ProductProfileAdd(TemplateView):
     template_name = 'pages/products/profile_add.html'
 
     def get(self, request, *args, **kwargs):
-        print('auth', request.user.is_authenticated)
-        print('super', request.user.is_superuser)
         if request.user.is_authenticated and request.user.is_superuser:
             context = self.get_context_data(**kwargs)
             context['algorithms'] = catalog_models.Algorithm.objects.all()
@@ -175,7 +172,6 @@ class ProductProfileAdd(TemplateView):
                                 size=s, name=attr, value=checking_value(p.getlist('items[{}]'.format(index + 1))[i])
                             )
         except Exception as e:
-            print(e)
             profile.delete()
         # return redirect(reverse('product-profile-add', kwargs={'product_id': product_id}))
         return redirect(reverse('products'))

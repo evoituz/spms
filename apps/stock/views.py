@@ -32,13 +32,11 @@ def fetch_data_from_request(request):
 
 def stock_control(request):
     if request.method == 'DELETE':
-        print('DELETE')
         data = fetch_data_from_request(request)
         Stock.objects.get(pk=data['id']).delete()
         return JsonResponse(data)
 
     if request.method == 'PUT':
-        print('PUT')
         data = fetch_data_from_request(request)
         stock = Stock.objects.get(pk=data.get('id'))
         stock.__dict__.update(data)
@@ -46,7 +44,6 @@ def stock_control(request):
         return JsonResponse(data)
 
     if request.method == 'POST':
-        print('POST')
         data = request.POST
         stock_category = StockCategory.objects.get(pk=data.get('category_id'))
         stock = Stock.objects.create(
@@ -75,13 +72,11 @@ def get_stock_categories(request):
             return JsonResponse(result)
 
         if request.method == 'DELETE':
-            print('DELETE')
             data = fetch_data_from_request(request)
             StockCategory.objects.get(pk=data['id']).delete()
             return JsonResponse(data)
 
         if request.method == 'PUT':
-            print('PUT')
             data = fetch_data_from_request(request)
             stock = StockCategory.objects.get(pk=data.get('id'))
             stock.__dict__.update(data)
