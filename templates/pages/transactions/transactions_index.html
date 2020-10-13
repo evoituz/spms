@@ -37,12 +37,22 @@
                 dataType: 'json',
             }).done(function (response) {
                 let clients = {}
-                let dates = {}
+                let days = {}
+                let months = {}
+                let years = {}
                 clients[0] = {
                     name: '',
                     id: 0
                 }
-                dates[0] = {
+                days[0] = {
+                    date: '',
+                    id: ''
+                }
+                months[0] = {
+                    date: '',
+                    id: ''
+                }
+                years[0] = {
                     date: '',
                     id: ''
                 }
@@ -54,15 +64,18 @@
 
                         }
                     }
-                    let date = new Date(response[i].created_dt)
-                    let dt = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
-                    dates[date.getDate()] = {
-                        name: dt,
-                        id: response[i].created_dt
+                    days[response[i].created_day] = {
+                        name: response[i].created_day,
+                    }
+                    months[response[i].created_month] = {
+                        name: response[i].created_month,
+                    }
+                    years[response[i].created_year] = {
+                        name: response[i].created_year,
                     }
 
+
                 }
-                console.log(clients, dates)
                 let transactions = $('#transactionGrid');
                 transactions.jsGrid({
                     width: "100%",
@@ -85,7 +98,6 @@
                                 data: data,
                             }).done(function (response) {
                                 let result = $.grep(response, function (item) {
-                                    console.log(data)
                                     return item
                                 });
                                 d.resolve(result);
@@ -107,18 +119,36 @@
                             }
                         },
                         {
-                            name: "created_dt",
+                            name: "created_day",
                             type: "select",
-                            items: dates,
+                            items: days,
                             textField: 'name',
-                            valueField: String('id'),
-                            title: "Дата",
-                            width: 80, itemTemplate: function (value, item) {
-                                value = new Date(value)
-                                return `${value.getDate()}.${value.getMonth() + 1}.${value.getFullYear()}`
-                            },
-                            filterValue: function () {
-                                return this.filterControl.val();
+                            valueField: 'name',
+                            title: "День",
+                            width: 30, itemTemplate: function (value, item) {
+                                return value
+                            }
+                        },
+                        {
+                            name: "created_month",
+                            type: "select",
+                            items: months,
+                            textField: 'name',
+                            valueField: 'name',
+                            title: "Месяц",
+                            width: 30, itemTemplate: function (value, item) {
+                                return value
+                            }
+                        },
+                        {
+                            name: "created_year",
+                            type: "select",
+                            items: years,
+                            textField: 'name',
+                            valueField: 'name',
+                            title: "Год",
+                            width: 40, itemTemplate: function (value, item) {
+                                return value
                             }
                         },
                         {name: "products", type: "text", title: "Товары"},
