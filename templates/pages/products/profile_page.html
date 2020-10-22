@@ -160,6 +160,8 @@
             for (let i = 0; i < editList.length; i++) {
                 $(editList[i]).editable({
                     success: function (response, newValue) {
+                        console.log(response);
+                        console.log(newValue);
                         if (response.ok) {
                             window.location.href = '/product/{{ profile.product.id }}/profile/{{ profile.id }}/'
                         }

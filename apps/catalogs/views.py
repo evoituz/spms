@@ -1,3 +1,4 @@
+import pdb
 from decimal import Decimal
 
 from django.http import JsonResponse
@@ -95,11 +96,11 @@ class ProductProfileViews(DetailView):
         name = request.POST.get('name')
         value = request.POST.get('value')
         pk = int(request.POST.get('pk'))
-
         profile = catalog_models.ProductProfile.objects.get(product__id=int(product_id), id=int(profile_id))
-        size = profile.sizes.get(id=pk)
         if name == 'size':
+            size = profile.sizes.get(id=pk)
             size.size = value
+            size.save()
         if name == 'item':
             item = catalog_models.ProductProfileSizeItem.objects.get(id=pk)
             if value.find(',') != -1:
@@ -108,14 +109,21 @@ class ProductProfileViews(DetailView):
                 item.value = float(value)
             item.save()
         if name == 'sell_price_usd':
+            size = profile.sizes.get(id=pk)
             size.sell_price_usd = float(value)
+            size.save()
         if name == 'sell_price_uzs':
+            size = profile.sizes.get(id=pk)
             size.sell_price_uzs = float(value)
+            size.save()
         if name == 'notes':
+            size = profile.sizes.get(id=pk)
             size.notes = value
+            size.save()
         if name == 'tone':
+            size = profile.sizes.get(id=pk)
             size.tone = float(value) if value.find(',') == -1 else float(value.replace(',', '.'))
-        size.save()
+            size.save()
 
         list_names = ['sell_price_uzs', 'tone']
         if name in list_names:
