@@ -64,7 +64,6 @@
                         let result = $.grep(response, function (item) {
                             return (!data.name.toLowerCase() || item.name.toLowerCase().indexOf(data.name.toLowerCase()) > -1)
                         });
-                        console.log(result);
                         d.resolve(result);
                     });
                     return d.promise();

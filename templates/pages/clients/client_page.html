@@ -17,7 +17,9 @@
                 <div class="card">
                     <div class="card-body" style="font-size: 24px;">
                         <div class="font-weight-bolder text-monospace">Клиент: {{ user.name }}</div>
-                        <div class="text-monospace badge badge-primary text-wrap font-weight-bolder">Баланс: <span class="user-balance">{{ user.balance }}</span> сум</div>
+                        <div class="text-monospace badge badge-primary text-wrap font-weight-bolder">Баланс: <span
+                                class="user-balance">{{ user.balance }}</span> сум
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,25 +84,33 @@
             fields: [
                 {name: "items__product_title", type: "text", title: "Наименование"},
                 {
-                    name: "items__price", type: "text", title: "Цена", itemTemplate: function (value, item) {
+                    name: "items__price", type: "hidden", title: "Цена", itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
                 {
                     name: "paid_price",
-                    type: "text",
+                    type: "hidden",
                     title: "Оплачено",
                     itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
                 {
-                    name: "debt_price", type: "text", title: "В долг", itemTemplate: function (value, item) {
+                    name: "debt_price", type: "hidden", title: "В долг", itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
-                {name: "created_dt", type: "text", title: "Дата"},
-
+                {
+                    name: "created_dt", type: "text", width: 120, title: "Дата", filterTemplate: function () {
+                        this.filterControl = $('<input type="date">')
+                        return this.filterControl
+                    },
+                    filterValue: function (value, item) {
+                        return this.filterControl.val()
+                    }
+                },
+                {type: 'control', editButton: false, deleteButton: false, width: 35}
             ]
         })
 
@@ -127,8 +137,7 @@
                     }).done(function (response) {
                         let result = $.grep(response, function (item) {
                             let date = new Date(item.created_dt)
-                            let dateTime = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`;
-                            item.created_dt = dateTime
+                            item.created_dt = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
                             return item
                         });
                         d.resolve(result);
@@ -150,13 +159,21 @@
 
             fields: [
                 {
-                    name: "amount", type: "text", title: "Сумма", itemTemplate: function (value, item) {
+                    name: "amount", type: "hidden", title: "Сумма", itemTemplate: function (value, item) {
                         return value + ' сум'
                     }
                 },
-                {name: "created_dt", type: "text", title: "Дата"},
+                {
+                    name: "created_dt", type: "text", width: 120, title: "Дата", filterTemplate: function () {
+                        this.filterControl = $('<input type="date">')
+                        return this.filterControl
+                    },
+                    filterValue: function (value, item) {
+                        return this.filterControl.val()
+                    }
+                },
                 {type: 'control', editButton: false, deleteButton: false}
-            ]
-        });
+            ],
+        })
     </script>
 {% endblock %}

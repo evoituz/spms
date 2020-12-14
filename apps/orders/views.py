@@ -68,23 +68,19 @@ def transaction_list(request):
     if request.GET:
         if request.GET.get('client') != '0':
             transactions_filtered = transactions_filtered.filter(client__in=request.GET.get('client'))
-
-        if request.GET.get('created_day') != '0':
-            transactions_filtered = transactions_filtered.filter(created_dt__day=request.GET.get('created_day'))
-
-        if request.GET.get('created_month') != '0':
-            transactions_filtered = transactions_filtered.filter(created_dt__month=request.GET.get('created_month'))
-
-        if request.GET.get('created_year') != '0':
-            transactions_filtered = transactions_filtered.filter(created_dt__year=request.GET.get('created_year'))
+        if request.GET.get('created_dt'):
+            dt = datetime.strptime(request.GET.get('created_dt'), '%Y-%m-%d')
+            transactions_filtered = transactions_filtered.filter(
+                created_dt__day=dt.day,
+                created_dt__month=dt.month,
+                created_dt__year=dt.year
+            )
 
     for transaction in transactions_filtered:
         if transaction.order:
             transactions.append(
                 {'id': transaction.id,
-                 'created_year': transaction.created_dt.year,
-                 'created_month': transaction.created_dt.month,
-                 'created_day': transaction.created_dt.day,
+                 'created_dt': transaction.created_dt,
                  'client': {'name': transaction.client.name, 'id': transaction.client.id} if transaction.client else {},
                  'products': transaction.order.get_items_to_string(),
                  'final_sum': transaction.amount,
@@ -94,9 +90,7 @@ def transaction_list(request):
         else:
             transactions.append({
                 'id': transaction.id,
-                'created_year': transaction.created_dt.year,
-                'created_month': transaction.created_dt.month,
-                'created_day': transaction.created_dt.day,
+                'created_dt': transaction.created_dt,
                 'client': {'name': transaction.client.name, 'id': transaction.client.id} if transaction.client else {},
                 'products': '',
                 'final_sum': transaction.amount,

@@ -37,24 +37,9 @@
                 dataType: 'json',
             }).done(function (response) {
                 let clients = {}
-                let days = {}
-                let months = {}
-                let years = {}
                 clients[0] = {
                     name: '',
                     id: 0
-                }
-                days[0] = {
-                    date: '',
-                    id: ''
-                }
-                months[0] = {
-                    date: '',
-                    id: ''
-                }
-                years[0] = {
-                    date: '',
-                    id: ''
                 }
                 for (let i = 0; i < response.length; i++) {
                     if (response[i].client.id) {
@@ -64,17 +49,6 @@
 
                         }
                     }
-                    days[response[i].created_day] = {
-                        name: response[i].created_day,
-                    }
-                    months[response[i].created_month] = {
-                        name: response[i].created_month,
-                    }
-                    years[response[i].created_year] = {
-                        name: response[i].created_year,
-                    }
-
-
                 }
                 let transactions = $('#transactionGrid');
                 transactions.jsGrid({
@@ -89,7 +63,6 @@
 
                     controller: {
                         loadData: function (data) {
-                            console.log(data)
                             let d = $.Deferred();
                             $.ajax({
                                 url: {% url 'transactions-list' %},
@@ -98,6 +71,8 @@
                                 data: data,
                             }).done(function (response) {
                                 let result = $.grep(response, function (item) {
+                                    let date = new Date(item.created_dt)
+                                    item.created_dt = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
                                     return item
                                 });
                                 d.resolve(result);
@@ -107,7 +82,7 @@
                     },
 
                     fields: [
-                        {name: "id", type: "text", title: "#", width: 30},
+                        {name: "id", type: "hidden", title: "#", width: 30},
                         {
                             name: "client",
                             type: "select",
@@ -119,42 +94,19 @@
                             }
                         },
                         {
-                            name: "created_day",
-                            type: "select",
-                            items: days,
-                            textField: 'name',
-                            valueField: 'name',
-                            title: "День",
-                            width: 30, itemTemplate: function (value, item) {
-                                return value
+                            name: "created_dt", type: "text", title: "Дата", filterTemplate: function () {
+                                this.filterControl = $('<input type="date">')
+                                return this.filterControl
+                            },
+                            filterValue: function () {
+                                return this.filterControl.val()
                             }
                         },
-                        {
-                            name: "created_month",
-                            type: "select",
-                            items: months,
-                            textField: 'name',
-                            valueField: 'name',
-                            title: "Месяц",
-                            width: 30, itemTemplate: function (value, item) {
-                                return value
-                            }
-                        },
-                        {
-                            name: "created_year",
-                            type: "select",
-                            items: years,
-                            textField: 'name',
-                            valueField: 'name',
-                            title: "Год",
-                            width: 40, itemTemplate: function (value, item) {
-                                return value
-                            }
-                        },
-                        {name: "products", type: "text", title: "Товары"},
-                        {name: "final_sum", type: "text", title: "Сумма заказа", width: 40},
-                        {name: "paid", type: "text", title: "Оплачено", width: 40},
-                        {name: "debt", type: "text", title: "Долг", width: 40}
+                        {name: "products", type: "hidden", title: "Товары"},
+                        {name: "final_sum", type: "hidden", title: "Сумма заказа", width: 40},
+                        {name: "paid", type: "hidden", title: "Оплачено", width: 40},
+                        {name: "debt", type: "hidden", title: "Долг", width: 40},
+                        {type: 'control', editButton: false, deleteButton: false, width: 35}
                     ]
                 });
             })

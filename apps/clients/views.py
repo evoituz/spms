@@ -34,26 +34,13 @@ class ClientView(DetailView):
         if request.is_ajax():
 
             if request.GET.get('created_dt'):
-                dt = str(request.GET.get('created_dt')).split('.')
-                # проверяю есть ли в запросе день, месяц и год и исходя из этого фильтрую
-                try:
-                    queryset = list(self.model.objects.get(id=self.kwargs['pk']).order_set.filter(created_dt__day=dt[0],
-                                                                                                  created_dt__month=dt[
-                                                                                                      1],
-                                                                                                  created_dt__year=dt[
-                                                                                                      2]).values(
-                        'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
-                except IndexError:
-                    try:
-                        queryset = list(
-                            self.model.objects.get(id=self.kwargs['pk']).order_set.filter(created_dt__day=dt[0],
-                                                                                          created_dt__month=dt[1]
-                                                                                          ).values(
-                                'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
-                    except IndexError:
-                        queryset = list(self.model.objects.get(id=self.kwargs['pk']).order_set.filter(
-                            created_dt__day=dt[0]).values(
-                            'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
+                dt = datetime.strptime(request.GET.get('created_dt'), '%Y-%m-%d')
+                queryset = list(self.model.objects.get(id=self.kwargs['pk']).order_set.filter(
+                    created_dt__day=dt.day,
+                    created_dt__month=dt.month,
+                    created_dt__year=dt.year,
+                ).values(
+                    'items__product_title', 'items__price', 'created_dt', 'transaction__paid'))
             else:
                 queryset = list(
                     self.model.objects.get(id=self.kwargs['pk']).order_set.all().values('items__product_title',
@@ -83,18 +70,15 @@ class TransactionView(TemplateView):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             if request.GET.get('created_dt'):
-                dt = str(request.GET.get('created_dt')).split('.')
-                queryset = self.model.objects.filter(created_dt__day=dt[0])
-                try:
-                    queryset = queryset.filter(created_dt__month=dt[1])
-                except IndexError:
-                    pass
-                try:
-                    queryset = queryset.filter(created_dt__year=dt[2])
-                except IndexError:
-                    pass
+                created_dt = datetime.strptime(request.GET.get('created_dt'), '%Y-%m-%d')
                 queryset = list(
-                    queryset.filter(client_id=self.request.GET.get('url_id'), order__isnull=True).values(
+                    self.model.objects.filter(
+                        created_dt__day=created_dt.day,
+                        created_dt__month=created_dt.month,
+                        created_dt__year=created_dt.year,
+                        client_id=self.request.GET.get('url_id'),
+                        order__isnull=True
+                    ).values(
                         'created_dt',
                         'amount',
                     ))

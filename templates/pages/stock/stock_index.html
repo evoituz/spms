@@ -96,7 +96,6 @@
                     });
                 },
                 deleteItem: function (item) {
-                    console.log(item);
                     return $.ajax({
                         url: "{% url 'stock-control' %}",
                         type: "DELETE",
@@ -134,7 +133,6 @@
                 {type: "control"}
             ],
             updateCategories: function () {
-                console.log(this.fields[1]);
             }
         });
 
