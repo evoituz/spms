@@ -45,7 +45,7 @@
             height: "auto",
 
             filtering: true,
-            inserting: false,
+            inserting: true,
             editing: false,
             sorting: true,
             autoload: true,
@@ -77,6 +77,14 @@
                         data: item
                     });
                 },
+                insertItem: function (item) {
+                    return $.ajax({
+                        url: "{% url 'create-client' %}",
+                        type: "POST",
+                        dataType: 'json',
+                        data: item
+                    });
+                },
             },
             fields: [
                 {name: "id", type: "hidden", title: "#", width: 25},
@@ -87,6 +95,8 @@
                         return divBlock
                     }
                 },
+                {name: "district", type: "text", title: "Адрес"},
+                {name: "phone", type: "text", title: "Телефон"},
                 {
                     name: "balance", type: "number", title: "Баланс", width: 60, itemTemplate: function (value, item) {
                         return value + ' сум'

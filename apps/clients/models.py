@@ -3,6 +3,8 @@ from django.db import models
 
 class Client(models.Model):
     name = models.CharField('Имя клиента', max_length=250)
+    district = models.CharField('Район', max_length=250, blank=True)
+    phone = models.CharField('Телефон', max_length=250, blank=True)
     balance = models.DecimalField('Баланс', max_digits=25, decimal_places=0,
                                   default=0)  # При транзакции, необходимо записывать оплату сюда. Если долг минусовать, если оплатили плюсовать
 

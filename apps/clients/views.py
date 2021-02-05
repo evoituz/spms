@@ -105,9 +105,31 @@ class TransactionView(TemplateView):
 @csrf_exempt
 def update_client(request, id):
     name = request.POST.get('name')
+    district = request.POST.get('district')
+    phone = request.POST.get('phone')
     balance = request.POST.get('balance')
     client = Client.objects.get(id=id)
     client.balance = int(balance)
     client.name = name
+    client.district = district if district else ''
+    client.phone = phone if phone else ''
+    client.phone = phone if phone else ''
     client.save()
-    return JsonResponse({'id': client.id, 'name': client.name, 'balance': client.balance}, status=200)
+    return JsonResponse({'id': client.id, 'name': client.name, 'district': district, 'phone': phone, 'balance': client.balance}, status=200)
+
+
+@csrf_exempt
+def create_client(request):
+    name = request.POST.get('name')
+    district = request.POST.get('district')
+    phone = request.POST.get('phone')
+    balance = request.POST.get('balance')
+    client = Client()
+    client.name = name
+    client.district = district if district else ''
+    client.phone = phone if phone else ''
+    client.phone = phone if phone else ''
+    if balance:
+        client.balance = int(balance)
+    client.save()
+    return JsonResponse({'id': client.id, 'name': client.name, 'district': district, 'phone': phone, 'balance': client.balance}, status=201)

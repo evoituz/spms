@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('clients/get-clients/', clients_views.get_clients, name='get-clients'),
     path('clients/update-client/<int:id>/', clients_views.update_client, name='update-client'),
+    path('clients/create-client/', clients_views.create_client, name='create-client'),
     path('clients/', clients_views.ClientsListView.as_view(), name='clients'),
     path('client/<int:pk>/', clients_views.ClientView.as_view(), name='client'),
 
